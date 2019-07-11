@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <description>Email配置</description>
+
+    <!-- 邮件发送器 -->
+    <bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
+        <!--<property name="host" value="smtp.mxhichina.com" />-->
+        <property name="host" value="${mail.host}" />
+        <property name="username" value="${mail.username}" />
+        <property name="password" value="${mail.password}" />
+        <!--<property name="port" value="${mail.port}"/>-->
+        <property name="defaultEncoding" value="UTF-8"/>
+        <property name="javaMailProperties">
+            <props>
+                <prop key="mail.smtp.auth">${mail.smtp.auth}</prop>
+                <prop key="mail.smtp.starttls.enable">${mail.smtp.starttls.enable}</prop>
+                <prop key="mail.smtp.socketFactory.port">${mail.smtp.socketFactory.port}</prop>
+                <prop key="mail.smtp.socketFactory.class">${mail.smtp.socketFactory.class}</prop>
+            </props>
+        </property>
+    </bean>
+
+    <!-- 用于生成HTML邮件内容的Freemarker配置 -->
+    <bean id="mailFreemarkerConfiguration" class="org.springframework.ui.freemarker.FreeMarkerConfigurationFactoryBean">
+        <property name="templateLoaderPath" value="classpath:/template/email" />
+    </bean>
+
+    <bean id="mailService" class="cn.ipph.email.MailService"></bean>
+</beans>

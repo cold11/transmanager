@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:task="http://www.springframework.org/schema/cache" xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/context
+       http://www.springframework.org/schema/context/spring-context.xsd
+       http://www.springframework.org/schema/cache
+       http://www.springframework.org/schema/cache/spring-cache.xsd
+       http://www.springframework.org/schema/tx
+       http://www.springframework.org/schema/tx/spring-tx.xsd
+       http://www.springframework.org/schema/aop
+       http://www.springframework.org/schema/aop/spring-aop.xsd ">
+
+    <description>数据库配置</description>
+
+    <!-- DruidDataSource -->
+    <bean id="jdbcDataSource"
+          class="com.zaxxer.hikari.HikariDataSource"
+          destroy-method="close">
+
+        <property name="driverClassName"
+                  value="${jdbc.driverClassName}">
+        </property>
+        <property name="jdbcUrl" value="${jdbc.url2}"></property>
+
+        <property name="username" value="${jdbc.username2}"></property>
+        <property name="password" value="${jdbc.password2}"></property>
+        <property name="idleTimeout" value="${Hikari.idleTimeout}"/>
+        <property name="maxLifetime" value="${Hikari.maxLifetime}"/>
+        <property name="connectionTimeout" value="${Hikari.connectionTimeout}"/>
+        <property name="minimumIdle" value="${Hikari.minimumIdle}" />
+        <property name="poolName" value="${Hikari.poolName}" />
+        <property name="maximumPoolSize" value="${Hikari.maximumPoolSize}" />
+    </bean>
+    <!-- 配置jdbcTemplate -->
+    <bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+        <property name="dataSource" ref="jdbcDataSource"></property>
+    </bean>
+
+    <bean id="dataSource" class="com.zaxxer.hikari.HikariDataSource" destroy-method="close">
+        <!-- 基本属性 url、user、password -->
+        <property name="driverClassName" value="${jdbc.driverClassName}"/>
+        <property name="jdbcUrl" value="${jdbc.url}"/>
+        <property name="username" value="${jdbc.username}"/>
+        <property name="password" value="${jdbc.password}"/>
+
+        <property name="idleTimeout" value="${Hikari.idleTimeout}"/>
+        <property name="maxLifetime" value="${Hikari.maxLifetime}"/>
+        <property name="connectionTimeout" value="${Hikari.connectionTimeout}"/>
+        <property name="minimumIdle" value="${Hikari.minimumIdle}" />
+        <property name="poolName" value="${Hikari.poolName}" />
+        <property name="maximumPoolSize" value="${Hikari.maximumPoolSize}" />
+
+    </bean>
+    <bean id="sessionFactory" class="org.springframework.orm.hibernate5.LocalSessionFactoryBean">
+        <property name="dataSource" ref="dataSource" />
+        <property name="hibernateProperties">
+            <props>
+                <prop key="hibernate.dialect">org.hibernate.dialect.MySQL5Dialect</prop>
+                <prop key="hibernate.hbm2ddl.auto">update</prop>
+                <prop key="hibernate.show_sql">true</prop>
+                <prop key="hibernate.autoReconnect">true</prop>
+            </props>
+        </property>
+        <!--自动扫描 -->
+        <property name="packagesToScan" value="com.cold.entity" />
+    </bean>
+    
+    <!-- 配置hibernateTemplate -->
+	<bean id="hibernateTemplate" class="org.springframework.orm.hibernate5.HibernateTemplate">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+	</bean>
+
+    <!--&lt;!&ndash; 配置jdbcTemplate &ndash;&gt;-->
+    <!--<bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">-->
+        <!--<property name="dataSource" ref="dataSource"></property>-->
+    <!--</bean>-->
+
+    <!-- 配置事务管理器 -->
+    <bean id="transactionManager" class="org.springframework.orm.hibernate5.HibernateTransactionManager">
+        <property name="sessionFactory" ref="sessionFactory" />
+    </bean>
+
+    <tx:annotation-driven proxy-target-class="false" transaction-manager="transactionManager"/>
+    <!-- 配置事务的传播特性 -->
+    <tx:advice id="txAdvice" transaction-manager="transactionManager">
+        <tx:attributes>
+            <tx:method name="save*" propagation="REQUIRED" />
+            <tx:method name="add*" propagation="REQUIRED" />
+            <tx:method name="insert*" propagation="REQUIRED" />
+            <tx:method name="update*" propagation="REQUIRED" />
+            <tx:method name="delete*" propagation="REQUIRED" />
+            <tx:method name="cancel*" propagation="REQUIRED" />
+            <tx:method name="disable*" propagation="REQUIRED" />
+            <tx:method name="*" read-only="true" />
+        </tx:attributes>
+    </tx:advice>
+    <aop:config>
+        <aop:pointcut id="allServiceMethod" expression="execution(* com.cold.service..*(..))" />
+        <aop:advisor pointcut-ref="allServiceMethod" advice-ref="txAdvice" />
+    </aop:config>
+
+
+</beans>

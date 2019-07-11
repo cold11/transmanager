@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Configuration status="off" monitorInterval="1800">
+    <properties>
+        <property name="LOG_HOME">E:\Logs</property>
+        <property name="LOG_FILE_NAME">transm</property>
+    </properties>
+
+    <Appenders>
+
+        <Console name="STDOUT" target="SYSTEM_OUT">
+            <PatternLayout>
+                <!--<charset>UTF-8</charset>-->
+                <Pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level %logger Line:%-3L - %msg%n</Pattern>
+            </PatternLayout>
+        </Console>
+        <RollingRandomAccessFile name="ERROR_FILE"
+                                 fileName="${LOG_HOME}/${LOG_FILE_NAME}_error.log"
+                                 filePattern="${LOG_HOME}/${LOG_FILE_NAME}_error_%d{yyyy-MM-dd}.log">
+            <PatternLayout>
+                <charset>UTF-8</charset>
+                <Pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level %logger Line:%-3L - %msg%n</Pattern>
+            </PatternLayout>
+            <Policies>
+                <!-- 每1天更新一次 -->
+                <!-- TimeBasedTriggeringPolicy需要和filePattern配套使用，由于filePattern配置的时间最小粒度是dd天，所以表示每一天新建一个文件保存日志。SizeBasedTriggeringPolicy表示当文件大小大于指定size时，生成新的文件保存日志。 -->
+                <TimeBasedTriggeringPolicy modulate="true"
+                                           interval="1" />
+                <!-- 此处为每个文件大小策略限制，使用它一般会在文件中filePattern采用%i模式 -->
+                <!--SizeBasedTriggeringPolicy size="100MB"/-->
+            </Policies>
+            <DefaultRolloverStrategy max="30"/>
+            <Filters>
+                <!--只显示error级别的信息-->
+                <ThresholdFilter level="error" onMatch="ACCEPT" onMismatch="DENY"/>
+            </Filters>
+        </RollingRandomAccessFile>
+        <RollingRandomAccessFile name="INFO_FILE"
+                                 fileName="${LOG_HOME}/${LOG_FILE_NAME}_info.log"
+                                 filePattern="${LOG_HOME}/${LOG_FILE_NAME}_info-%d{yyyy-MM-dd}.%i.log">
+            <PatternLayout pattern="%d %-5p (%F:%L) - %m%n"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy/>
+                <SizeBasedTriggeringPolicy size="100MB"/>
+            </Policies>
+            <DefaultRolloverStrategy max="30"/>
+            <Filters>
+                <ThresholdFilter level="error" onMatch="DENY" onMismatch="NEUTRAL"/>
+                <ThresholdFilter level="trace" onMatch="ACCEPT" onMismatch="DENY"/>
+            </Filters>
+        </RollingRandomAccessFile>
+    </Appenders>
+
+    <Loggers>
+        <logger name="cn.ipph"  level="INFO"  additivity="false">
+            <appender-ref ref="STDOUT"/>
+            <appender-ref ref="INFO_FILE"/>
+            <appender-ref ref="ERROR_FILE"/>
+        </logger>
+        <logger name="com.cold"  level="INFO"  additivity="false">
+            <appender-ref ref="STDOUT"/>
+            <appender-ref ref="INFO_FILE"/>
+            <appender-ref ref="ERROR_FILE"/>
+        </logger>
+        <root level="INFO">
+            <appender-ref ref="STDOUT" />
+            <appender-ref ref="INFO_FILE" />
+            <appender-ref ref="ERROR_FILE" />
+        </root>
+    </Loggers>
+</Configuration>

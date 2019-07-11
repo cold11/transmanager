@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:task="http://www.springframework.org/schema/task"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+	http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task.xsd">
+
+    <!--定时任务,支持注解Scheduled-->
+    <!-- Enables the Spring Task @Scheduled programming model -->
+    <!--创建线程池用来管理异步定时任务开启的线程-->
+    <task:executor id="executor" pool-size="5" />
+    <!--创建定时任务-->
+    <task:scheduler id="scheduler" pool-size="5" />
+    <task:annotation-driven executor="executor" scheduler="scheduler" />
+</beans>

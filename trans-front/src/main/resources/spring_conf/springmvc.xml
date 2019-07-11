@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                             http://www.springframework.org/schema/beans/spring-beans.xsd
+                             http://www.springframework.org/schema/context
+                             http://www.springframework.org/schema/context/spring-context.xsd
+                            http://www.springframework.org/schema/mvc
+                            http://www.springframework.org/schema/mvc/spring-mvc.xsd">
+    <!-- 配置自动扫描的包 -->
+    <context:component-scan base-package="com.cold.controller,com.cold.exception"/>
+    <context:property-placeholder  location="classpath:properties/config.properties" />
+    <mvc:annotation-driven />
+    <!-- spring mvc对静态资源的访问 -->
+<!--    <mvc:resources mapping="swagger-ui.html" location="classpath:/META-INF/resources/"/>-->
+<!--    <mvc:resources location="/img/" mapping="/img/**"/>-->
+<!--    <mvc:resources location="/css/" mapping="/css/**"/>-->
+<!--    <mvc:resources location="/js/" mapping="/js/**"/>-->
+<!--    <mvc:resources location="/lib/" mapping="/lib/**"/>-->
+<!--    <mvc:resources location="/webjars/" mapping="/webjars/**"/>-->
+<!--    <mvc:resources location="/assets/" mapping="/assets/**"/>-->
+<!--    <mvc:resources mapping="/webjars/**" location="classpath:/META-INF/resources/webjars/" />-->
+<!--    <mvc:resources mapping="/swagger/**" location="/swagger/" cache-period="31556926" />-->
+    <!-- Freemarker配置 -->
+    <bean id="freemarkerConfig"
+          class="org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer">
+        <property name="templateLoaderPath" value="/WEB-INF/views/" />
+        <property name="freemarkerSettings">
+            <props>
+                <prop key="template_update_delay">0</prop>
+                <prop key="default_encoding">UTF-8</prop>
+                <prop key="number_format">0.##########</prop>
+                <prop key="datetime_format">yyyy-MM-dd HH:mm:ss</prop>
+                <prop key="classic_compatible">true</prop>
+                <prop key="template_exception_handler">ignore</prop>
+            </props>
+        </property>
+    </bean>
+    <!-- 配置FreeMarker视图解析器：如何把handler方法返回值解析为实际视图 -->
+    <bean id="freeMarkerViewResolver" class="org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver">
+        <property name="cache" value="true" />
+        <property name="viewClass" value="com.cold.common.freemarker.ExtFreeMarkerView"/>
+        <property name="prefix" value=""/>
+        <property name="suffix" value=".ftl" />
+        <property name="requestContextAttribute" value="request"/>
+        <property name="contentType" value="text/html; charset=UTF-8" />
+    </bean>
+
+
+    <!-- thymeleaf模板解析器  -->
+    <bean id="templateResolver"
+          class="org.thymeleaf.spring5.templateresolver.SpringResourceTemplateResolver">
+        <property name="prefix" value="/WEB-INF/views/"/>
+        <property name="suffix" value=".html"/>
+        <property name="characterEncoding" value="UTF-8"/>
+        <property name="order" value="1"/>
+        <property name="templateMode" value="HTML"/>
+        <property name="cacheable" value="false"/>
+    </bean>
+
+    <bean id="templateEngine"
+          class="org.thymeleaf.spring5.SpringTemplateEngine">
+        <property name="templateResolver" ref="templateResolver"/>
+        <property name="additionalDialects">
+            <set>
+                <bean class="nz.net.ultraq.thymeleaf.LayoutDialect"/>
+                <bean class="at.pollux.thymeleaf.shiro.dialect.ShiroDialect"/>
+            </set>
+        </property>
+    </bean>
+
+    <bean id="viewResolver" class="org.thymeleaf.spring5.view.ThymeleafViewResolver">
+        <property name="templateEngine" ref="templateEngine"/>
+        <property name="characterEncoding" value="UTF-8"/>
+    </bean>
+
+    <!---文件上传-->
+    <bean id="multipartResolver"  class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+        <property name="maxUploadSize" value="104857600" />
+        <property name="defaultEncoding" value="UTF-8" />
+        <property name="maxInMemorySize" value="40960"></property>
+        <!--<property name="uploadTempDir" value="fileUpload/temp"></property>-->
+    </bean>
+
+    <!--<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">-->
+        <!--<property name="prefix" value="/WEB-INF/views/"/>-->
+        <!--<property name="suffix" value=".jsp"/>-->
+    <!--</bean>-->
+
+</beans>
