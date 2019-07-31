@@ -16,9 +16,8 @@ import javax.persistence.*;
 @Entity
 @Table(name = "sys_user_role")
 public class SysUserRole implements java.io.Serializable {
-    @GenericGenerator(name = "generator", strategy = "increment")
     @Id
-    @GeneratedValue(generator = "generator")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(unique = true, nullable = false)
     private Long userRoleId;
     @ManyToOne(cascade=CascadeType.ALL)

@@ -1,6 +1,9 @@
 package com.cold.dao;
 import com.cold.entity.SysUser;
+import com.cold.page.Pager;
+import com.cold.vo.UserVo;
 
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -11,4 +14,7 @@ import java.util.Set;
 public interface IUserDao extends IBaseDao {
     SysUser findByLoginName(String loginName);
     Set<String> findRoles(String username);
+    List<UserVo> findUserByRole(long roleId);
+    void searchUserByRole(Pager pager);
+    List<UserVo> findFreeUserByRole(long roleId);
 }

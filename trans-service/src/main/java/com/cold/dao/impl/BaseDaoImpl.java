@@ -38,8 +38,8 @@ public class BaseDaoImpl implements IBaseDao {
         return sessionFactory.getCurrentSession();
     }
     @Override
-    public void save(Object entity) {
-        getSession().save(entity);
+    public Object save(Object entity) {
+        return getSession().save(entity);
     }
 
     @Override

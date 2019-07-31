@@ -11,10 +11,17 @@ import lombok.Setter;
 @Getter
 @Setter
 public class ResultBaseDto {
+    private boolean success;
     private String code;
-    private String message;
-    public ResultBaseDto(String code, String message) {
+    private String msg;
+    public ResultBaseDto(String code, String msg) {
         this.code = code;
-        this.message = message;
+        this.msg = msg;
+    }
+
+    public ResultBaseDto(boolean success, String code, String msg) {
+        this.success = success;
+        this.code = code;
+        this.msg = msg;
     }
 }

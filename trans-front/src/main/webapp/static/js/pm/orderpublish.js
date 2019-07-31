@@ -6,13 +6,47 @@ $(document).ready(function() {
             return false;
         }
     });
-    // $('#submitbtn').on('click',function () {
-    //     $('#mtForm').on('submit', function(e) {
-    //         e.preventDefault();
-    //         submit();
-    //         return false; // 阻止表单自动提交事件
-    //     });
-    // })
+    var transUser = $("#transUserId");
+    transUser.select2({
+        placeholder: "请选择用户",
+        theme: "bootstrap",
+        cache:true,
+        language:'zh-CN'
+        // ajax: {
+        //     url: ctxPath+'order/users',
+        //     data: function (params) {
+        //         var query = {
+        //             roleId: 2
+        //
+        //         }
+        //         // Query parameters will be ?search=[term]&page=[page]
+        //         return query;
+        //     },
+        //     processResults: function (data) {
+        //         console.log(data);
+        //         let list = data.msg;
+        //         let results = [];
+        //         $.each(list,function (i,e) {
+        //             console.log(i,e);
+        //             let obj = {};
+        //             obj.id=e.userId;
+        //             obj.text = e.username;
+        //             results.push(obj);
+        //         })
+        //         return {
+        //             results: results
+        //         };
+        //     }
+        // }
+
+    });
+    var proofUser = $("#proofUserId");
+    proofUser.select2({
+        placeholder: "请选择用户",
+        theme: "bootstrap",
+        cache:true,
+        language:'zh-CN'
+    });
     $('#orderForm').validator({
         focusCleanup: true,
         stopOnError:false,

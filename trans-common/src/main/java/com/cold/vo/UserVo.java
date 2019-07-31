@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * @Auther: ohj
@@ -12,7 +13,7 @@ import java.util.Date;
  */
 @Getter
 @Setter
-public class UserVo {
+public class UserVo extends BaseVo {
     private Long userId;
     private String username;
     private String password;
@@ -21,4 +22,14 @@ public class UserVo {
     private Integer isDisable;
     private Date disableDate;
     private Integer isDelete;
+    private Integer taskCount;//进行中的任务数
+    private Long userType;
+    private List<Long> roles;
+    public UserVo() {
+    }
+
+    public UserVo(Long userId, String username) {
+        this.userId = userId;
+        this.username = username;
+    }
 }

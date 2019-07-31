@@ -269,7 +269,8 @@
         <!-- Sidebar Navidation Menus-->
         <ul class="list-unstyled">
             <li class="active"> <a th:href="@{/task/hall}"><i class="icon-home"></i>任务大厅</a></li>
-            <li shiro:hasRole="ROLE_PM"> <a th:href="@{/order/fill}"><i class="icon-interface-windows"></i>任务发布</a></li>
+            <li shiro:hasRole="ROLE_PM"> <a th:href="@{/order/fill}"><i class="icon-interface-windows"></i>任务分配</a></li>
+            <li shiro:hasRole="ROLE_SALE"> <a th:href="@{/sales/order}"><i class="icon-interface-windows"></i>任务登记</a></li>
             <li><a href="#apps" aria-expanded="false" data-toggle="collapse"> <i class="fa fa-tasks"></i>我的任务 </a>
                 <ul id="apps" class="collapse list-unstyled">
                     <li><a href="calendar.html">翻译任务</a></li>

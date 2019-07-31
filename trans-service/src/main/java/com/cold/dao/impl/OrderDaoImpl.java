@@ -1,14 +1,18 @@
 package com.cold.dao.impl;
 
 import com.cold.dao.IOrderDao;
+import com.cold.entity.TBCustomer;
 import com.cold.entity.TBOrder;
 import com.cold.entity.TBOrderFile;
 import com.cold.page.Pager;
 import com.cold.vo.OrderVo;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Repository;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Map;
 
@@ -54,8 +58,22 @@ public class OrderDaoImpl extends BaseDaoImpl implements IOrderDao {
             hql += " order by expirationDate asc";
         }
         List<TBOrder> result = getPageListByParamMap(hql,paramMap,pager.getPageNo(),pager.getPageSize());
+        List<OrderVo> orderVos = Lists.newArrayList();
+        result.forEach(tbOrder -> {
+            OrderVo orderVo1 = new OrderVo();
+            try {
+                BeanUtils.copyProperties(orderVo1,tbOrder);
+                TBCustomer customer = tbOrder.getCustomer();
+                orderVo1.setCustomer(customer.getName());
+                orderVos.add(orderVo1);
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            } catch (InvocationTargetException e) {
+                e.printStackTrace();
+            }
+        });
         int count = getCountByHqlParamMap(countHql,paramMap);
-        pager.setResult(result);
+        pager.setResult(orderVos);
         pager.setTotalRows(count);
     }
 

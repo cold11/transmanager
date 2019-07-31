@@ -45,10 +45,11 @@ $(function () {
         var form = this;
         //form.holdSubmit();
         $.post(ctxPath+"doLogin",$('#loginForm').serialize()).done(function (data) {
+            console.log(data);
             if(data.code=='200'){
-                window.location.href=ctxPath+data.message;
+                window.location.href=ctxPath+data.msg;
             }else {
-                layer.alert(data.message,{icon:2});
+                layer.alert(data.msg,{icon:2});
             }
         }).fail(function () {
             layer.alert('服务器出现故障',{icon:2});

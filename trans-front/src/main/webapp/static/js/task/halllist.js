@@ -13,7 +13,7 @@ $(function () {
 });
 window.operateEvents = {
     'click .download': function (e, value, row, index) {
-        $.post(ctxPath+'trans/receive',{orderNum:row.orderNum}).done(function (data) {
+        $.post(ctxPath+'trans/receive',{taskNo:row.taskNo}).done(function (data) {
             if(data.success){
                 window.location.href = ctxPath+"task/unfinished";
             }else if(data.msg=='unfinished'){
@@ -51,7 +51,7 @@ function loadData(tabId) {
         responseHandler: responseHandler,
         columns: [
             {
-                field: 'orderNum',
+                field: 'taskNo',
                 title: '任务号',
                 width: 100,
                 align: 'center',
@@ -77,14 +77,25 @@ function loadData(tabId) {
                 valign: 'middle'
             },
             {
+                field: 'unitPrice',
+                title: '单价',
+                align: 'center',
+                valign: 'middle'
+            },
+            {
                 field: 'expirationDate',
                 title: '到期时间',
                 align: 'center',
                 valign: 'middle',
                 sortable:true,
-                formatter:function (value) {
-                    var date = new Date(value);
-                    return date.toLocaleString();
+                formatter:function (value,row) {
+                    if(tabId=='task'){
+                        var date = new Date(row.transTime);
+                        return date.toLocaleString();
+                    }else{
+                        var date = new Date(row.proofTime);
+                        return date.toLocaleString();
+                    }
                 }
             },
             {
@@ -122,8 +133,17 @@ function responseHandler(res) {
 
 function queryParams(params) {
     var pageNo = Math.ceil((params.offset+1)/params.limit);
+    let taskType = $("#taskType").val();
+    if(params.sort == 'expirationDate'){
+        if(taskType=='1'){
+            params.sort = 'transTime';
+        }else{
+            params.sort = 'proofTime';
+        }
+    }
+
     return {
-        status : $("#taskType").val(),
+        taskType : taskType,
         sort: params.sort,
         order: params.order,
         pageSize: params.limit,
@@ -139,4 +159,8 @@ function operateFormatter(value, row, index) {
         '<i class="fa fa-download"></i>领取',
         '</a>  '
     ].join('');
+}
+
+function PrefixInteger(num, length) {
+    return (Array(length).join('0') + num).slice(-length);
 }

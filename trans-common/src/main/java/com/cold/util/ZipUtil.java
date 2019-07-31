@@ -1,5 +1,6 @@
 package com.cold.util;
 
+import com.cold.dto.FileObj;
 import org.apache.commons.io.filefilter.NotFileFilter;
 import org.apache.commons.io.filefilter.SuffixFileFilter;
 
@@ -15,11 +16,11 @@ import java.util.zip.ZipOutputStream;
  */
 public class ZipUtil {
 
-    public static void zip(String zipFileName,List<String> files) throws Exception {
+    public static void zip(String zipFileName,List<FileObj> files) throws Exception {
         ZipOutputStream out = new ZipOutputStream(new FileOutputStream(zipFileName));
-        for (String fileName : files){
-            File file = new File(fileName);
-            out.putNextEntry(new ZipEntry(file.getName()));
+        for (FileObj fileObj : files){
+            File file = new File(fileObj.getFilename());
+            out.putNextEntry(new ZipEntry(fileObj.getOriginalFileName()));
             FileInputStream in = new FileInputStream(file);
             int b;
             while ( (b = in.read()) != -1) {

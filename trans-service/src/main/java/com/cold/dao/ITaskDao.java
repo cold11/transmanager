@@ -1,6 +1,10 @@
 package com.cold.dao;
 
 import com.cold.entity.TBTask;
+import com.cold.entity.TBUserTask;
+import com.cold.page.Pager;
+
+import java.util.List;
 
 /**
  * @Auther: ohj
@@ -8,6 +12,10 @@ import com.cold.entity.TBTask;
  * @Description:
  */
 public interface ITaskDao extends IBaseDao {
-    TBTask getTaskUserReceive(long userId);
-    TBTask getTaskUserByTaskNo(String taskNo,Integer taskType);
+    TBTask getTaskByTaskNo(String taskNo);
+    List<TBUserTask> getTaskUserReceives(long userId);
+    TBUserTask getTaskUserByTaskNo(String taskNo,Integer taskType);
+    int getTaskUserReceivesCount(long userId);
+    //任务大厅待领取任务列表
+    void getHallPageTask(Pager pager);
 }

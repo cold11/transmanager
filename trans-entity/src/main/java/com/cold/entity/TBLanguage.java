@@ -22,9 +22,8 @@ import java.util.Set;
 public class TBLanguage implements Serializable {
 
     // Fields
-    @GenericGenerator(name = "generator", strategy = "increment")
     @Id
-    @GeneratedValue(generator = "generator")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(unique = true, nullable = false)
     private Integer languageId;
     @Column(length = 50)

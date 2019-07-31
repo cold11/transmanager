@@ -1,14 +1,9 @@
 package com.cold.controller;
 
 import com.cold.dto.TaskType;
-import com.cold.entity.SysUser;
-import com.cold.entity.TBOrder;
-import com.cold.entity.TBOrderFile;
-import com.cold.entity.TBTask;
-import com.cold.service.IOrderService;
+import com.cold.entity.*;
 import com.cold.service.ITaskService;
 import com.cold.util.ContextUtil;
-import com.google.common.collect.Lists;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,67 +23,35 @@ import java.util.Map;
 /**
  * @Auther: ohj
  * @Date: 2019/7/10 10:37
- * @Description:
+ * @Description: 翻译
  */
 @Controller
 @RequestMapping("trans")
 public class TranslationController extends BaseController {
     @Autowired
     private ITaskService taskService;
-    @Autowired
-    private IOrderService orderService;
     @RequestMapping(value = "receive",produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody Map<String, Object> saveReceiveTrans(@RequestParam String orderNum){
+    public @ResponseBody Map<String, Object> saveReceiveTrans(@RequestParam String taskNo){
         Long userId = ContextUtil.getUserId();
         Subject subject = SecurityUtils.getSubject();
-        System.out.println(subject.getPrincipals());
         if(!subject.hasRole("ROLE_TRANS")){
             return jsonResult(false,"任务领取失败，没有权限！");
         }
-        TBTask taskUserReceive = taskService.getTaskUserReceive(userId);
-        if (taskUserReceive != null) {
+        TBTask tbTask = taskService.getTaskByTaskNo(taskNo);
+        if(tbTask==null){
+            return jsonResult(false,"任务领取失败，不存在的任务！");
+        }
+        List<TBUserTask> taskUserReceive = taskService.getTaskUserReceives(userId);
+        if (!taskUserReceive.isEmpty()) {
             return jsonResult(false,"unfinished");
         }
-        TBTask receivedTask = taskService.getTaskUserByTaskNo(orderNum, TaskType.TRANS.value());
+        TBUserTask receivedTask = taskService.getTaskUserByTaskNo(taskNo, TaskType.TRANS.value());
         if(receivedTask!=null){
             return jsonResult(false,"任务领取失败，该任务已经被领取！");
         }
-        TBOrder tbOrder = orderService.findByOrderNum(orderNum);
-        SysUser sysUser = new SysUser();
-        sysUser.setUserId(userId);
-        receivedTask = new TBTask();
-        receivedTask.setSysUser(sysUser);
-        receivedTask.setTbOrder(tbOrder);
-        receivedTask.setBeginTime(new Date());
-        receivedTask.setExpirationDate(tbOrder.getExpirationDate());
-        receivedTask.setTaskNo(orderNum);
-        receivedTask.setTaskType(TaskType.TRANS.value());
-        taskService.reviceTask(receivedTask);
+        taskService.reviceTask(tbTask,TaskType.TRANS.value());
         return jsonResult(true,"");
     }
 
-    @RequestMapping("downloadTaskFile/{orderId}")
-    public void downloadTaskFile(@PathVariable("orderId") Long orderId, HttpServletResponse response){
-        TBOrder tbOrder = orderService.findEntityById(TBOrder.class,orderId);
-        String downFile = getBaseDir()+tbOrder.getDownloadPath();
-        File file = new File(downFile);
-        if(file.exists()){
-            downloadFile(response,file,file.getName());
-        }else{
-            outJsonString(response,"没有可下载的文件");
-        }
 
-//        String orderNum = tbOrder.getOrderNum();
-//        List<TBOrderFile> list = orderService.findTaskFileByOrderId(orderId);
-//        String basePath = getBaseDir();
-//        List<String> zipFiles = Lists.newArrayList();
-//        list.forEach(tbOrderFile -> {
-//            String filename = basePath+tbOrderFile.getFilePath();
-//            zipFiles.add(filename);
-//        });
-//        String zipFilename = basePath+ File.separator+ContextUtil.getLoginUser().getUsername()+File.separator+"trans"+File.separator+orderNum+".zip";
-
-
-
-    }
 }

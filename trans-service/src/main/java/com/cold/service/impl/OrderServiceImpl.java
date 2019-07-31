@@ -1,6 +1,9 @@
 package com.cold.service.impl;
 
+import com.cold.dao.ICustomerDao;
 import com.cold.dao.IOrderDao;
+import com.cold.dto.OrderFileStatus;
+import com.cold.entity.TBCustomer;
 import com.cold.entity.TBOrder;
 import com.cold.entity.TBOrderFile;
 import com.cold.page.Pager;
@@ -23,17 +26,25 @@ public class OrderServiceImpl extends BaseServiceImpl<TBOrder> implements IOrder
 
     @Autowired
     private IOrderDao orderDao;
+    @Autowired
+    private ICustomerDao customerDao;
     @Override
     //@Transactional
     public void saveOrder(TBOrder tbOrder) {
         Date now = new Date();
         tbOrder.setIsDelete(0);
         tbOrder.setPublishDate(now);
+        TBCustomer customer = tbOrder.getCustomer();
+        if(customer.getCustomerId()!=null&&customerDao.findEntityById(TBCustomer.class,customer.getCustomerId())==null){
+            customer.setCustomerId(null);
+            customerDao.save(customer);
+        }
         orderDao.save(tbOrder);
         List<TBOrderFile> orderFiles = tbOrder.getTbOrderFiles();
         for (TBOrderFile orderFile:orderFiles) {
             orderFile.setTbOrder(tbOrder);
-            orderFile.setStatus(0);
+            orderFile.setStatus(OrderFileStatus.INIT.value());
+            orderFile.setIsAssigned(false);
             orderDao.save(orderFile);
         }
 

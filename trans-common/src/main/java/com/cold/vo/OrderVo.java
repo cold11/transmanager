@@ -23,7 +23,9 @@ public class OrderVo extends BaseVo {
     private Integer status;
     private Integer isDelete;
     private Long createUserId;
+    private Long customerId;
     private String customer;//客户
     private String caseNo;//案号
+    private String requirement;//要求
     private Integer processStatus;
 }

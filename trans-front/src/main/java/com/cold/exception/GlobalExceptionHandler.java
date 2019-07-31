@@ -25,6 +25,6 @@ public class GlobalExceptionHandler {
             msg = "服务器出错";
         }
         log.error(msg,e);
-        return new ResultBaseDto("500",msg);
+        return new ResultBaseDto(false,"500",msg);
     }
 }

@@ -14,7 +14,7 @@ public interface IBaseDao {
      * 保存方法
      * @param entity
      */
-    void save(final Object entity);
+    Object save(final Object entity);
 
     /**
      * 修改方法

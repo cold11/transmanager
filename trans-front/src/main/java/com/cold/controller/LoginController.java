@@ -5,6 +5,7 @@ import com.cold.common.ResultBaseDto;
 import com.cold.entity.SysUser;
 import com.cold.service.IUserService;
 import com.cold.vo.UserVo;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.beanutils.BeanUtils;
@@ -24,6 +25,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -39,6 +41,19 @@ public class LoginController extends BaseController {
 
     @RequestMapping("login")
     public ModelAndView login(){
+//        for (int i=0;i<20;i++){
+//            UserVo sysUser = new UserVo();
+//            sysUser.setUsername("yiyuan"+(i+1));
+//            sysUser.setPassword("111111");
+//            sysUser.setUserType(2l);
+//            List<Long> roles = Lists.newArrayList();
+//            sysUser.setRoles(roles);
+//            roles.add(2l);
+//            if(i%3==0)
+//                roles.add(3l);
+//            //sysUser.setUserId((long)(i+3));
+//            userService.saveUser(sysUser);
+//        }
         return new ModelAndView("/login");
     }
 
@@ -62,10 +77,13 @@ public class LoginController extends BaseController {
             code = "200";
             if(currentUser.hasRole("ROLE_YIYUAN")){  //判断跳转地址.如果是译员到任务大厅，如果不是译员去试译页面
                 message = "task/hall";
-            }else if(currentUser.hasRole("ROLE_ADMIN")){
+            }else if(currentUser.hasRole("ROLE_SALE")){
+                message = "sales/order";
+            }
+            else if(currentUser.hasRole("ROLE_ADMIN")){
                 message = "task/hall";
             }else if(currentUser.hasRole("ROLE_PM")){
-                message = "task/hall";
+                message = "pm/assign";
             }
             else{
                 message = "task/hall";

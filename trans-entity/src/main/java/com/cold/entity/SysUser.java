@@ -19,9 +19,9 @@ import java.util.Set;
 @Getter
 @Setter
 public class SysUser implements java.io.Serializable {
-    @GenericGenerator(name = "generator", strategy = "increment")
     @Id
-    @GeneratedValue(generator = "generator")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+//    @GenericGenerator(name = "persistenceGenerator", strategy = "increment")
     @Column(unique = true, nullable = false)
     private Long userId;
     private String username;

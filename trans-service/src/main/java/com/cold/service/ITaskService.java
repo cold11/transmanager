@@ -1,6 +1,12 @@
 package com.cold.service;
 
+import com.cold.dto.FileObj;
 import com.cold.entity.TBTask;
+import com.cold.entity.TBUserTask;
+import com.cold.entity.TBUserTaskFile;
+import com.cold.page.Pager;
+
+import java.util.List;
 
 /**
  * @Auther: ohj
@@ -8,8 +14,47 @@ import com.cold.entity.TBTask;
  * @Description:
  */
 public interface ITaskService extends IBaseService<TBTask> {
-    TBTask getTaskUserReceive(long userId);
-    TBTask getTaskUserByTaskNo(String taskNo,Integer taskType);
-    void reviceTask(TBTask task);
-    void cancelTask(TBTask task);
+
+    TBTask getTaskByTaskNo(String taskNo);
+    /**
+     * 用户领取的任务
+     * @param userId
+     * @return
+     */
+    List<TBUserTask> getTaskUserReceives(long userId);
+
+    /**
+     * 根据任务号任务类型查询任务
+     * @param taskNo
+     * @param taskType
+     * @return
+     */
+    TBUserTask getTaskUserByTaskNo(String taskNo,Integer taskType);
+
+    /**
+     * 领取任务
+     * @param task
+     */
+    void reviceTask(TBTask task,Integer taskType);
+
+    /**
+     * 取消任务
+     * @param userTask
+     */
+    void cancelTask(TBUserTask userTask);
+
+    /**
+     * pm生成任务
+     * @param task
+     * @param taskFilePathList
+     */
+    void saveTask(TBTask task, List<FileObj> taskFilePathList);
+
+    /**
+     * 任务大厅
+     * @param pager
+     */
+    void getHallPageTask(Pager pager);
+
+    void saveUserTaskFile(TBUserTaskFile userTaskFile);
 }

@@ -7,6 +7,9 @@
     <link rel="stylesheet" th:href="@{/static/js/plugins/fileinput/css/fileinput.css}">
     <link rel="stylesheet" th:href="@{/static/js/plugins/nice-validator/jquery.validator.css}">
     <link rel="stylesheet" th:href="@{/static/js/plugins/daterangepicker/daterangepicker.css}">
+    <link rel="stylesheet" th:href="@{/static/js/plugins/select2/css/select2.css}">
+    <link rel="stylesheet" th:href="@{/static/js/plugins/select2/css/select2-bootstrap.css}">
+
     <title>任务发布</title>
     <script>
         var languages;
@@ -34,20 +37,44 @@
                     <input type="text" class="form-control" id="customer" name="customer" required>
                 </div>
                 <div class="form-group">
+                    <label for="transUserId">翻译</label>
+                    <select class="form-control" id="transUserId" name="transUserId">
+                        <option>===请选择用户===</option>
+                        <option th:each="transUser : ${transUsers}" th:text="${transUser.username}" th:value="${transUser.userId}"></option>
+                    </select>
+
+                </div>
+                <div class="form-group">
                     <label for="caseNo">案号</label>
                     <input type="text" class="form-control" id="caseNo" name="caseNo">
                 </div>
+
             </div>
             <div class="col-md-6">
+                <div class="form-group">
+                    <label for="caseNo">流程</label>
+                    <select class="form-control" name="transType">
+                        <option value="1">翻译</option>
+                        <option value="2">翻译+审校</option>
+                    </select>
+                </div>
                 <div class="form-group">
                     <label for="expirationDate"><i class="fa fa-calendar"></i>到期时间</label>
                     <input type="text" id = "expirationDate" name="expirationDate" class="form-control" readonly/>
 <!--                    <input type="datetime-local" class="form-control" id="expirationDate" name="expirationDate">-->
                 </div>
+                <div class="form-group">
+                    <label for="proofUserId">审校</label>
+                    <select class="form-control" id="proofUserId" name="proofUserId">
+                        <option>===请选择用户===</option>
+                        <option th:each="proofUser : ${proofUsers}" th:text="${proofUser.username}" th:value="${proofUser.userId}"></option>
+                    </select>
+                </div>
+
 
                 <div class="form-group has-success">
                     <label for="memo">备注</label>
-                    <textarea name="memo" id="memo" class="form-control" rows="4"></textarea>
+                    <textarea name="memo" id="memo" class="form-control"></textarea>
                 </div>
             </div>
         </div>
@@ -91,6 +118,8 @@
     <script th:src="@{/static/js/plugins/daterangepicker/daterangepicker.min.js}"></script>
     <script th:src="@{/static/js/plugins/nice-validator/jquery.validator.js}"></script>
     <script th:src="@{/static/js/plugins/nice-validator/local/zh-CN.js}"></script>
+    <script th:src="@{/static/js/plugins/select2/js/select2.min.js}"></script>
+    <script th:src="@{/static/js/plugins/select2/js/i18n/zh-CN.js}"></script>
     <script th:src="@{/static/js/serializeJson.js}"></script>
 
     <script th:src="@{/static/js/pickers.js}"></script>

@@ -20,9 +20,11 @@ import java.util.Set;
 @Entity
 @Table(name = "sys_role")
 public class SysRole implements Serializable {
-    @GenericGenerator(name = "generator", strategy = "increment")
+//    @GenericGenerator(name = "generator", strategy = "identity")
+//    @Id
+//    @GeneratedValue(generator = "generator")
     @Id
-    @GeneratedValue(generator = "generator")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(unique = true, nullable = false)
     private Long roleId;
     private String roleName;

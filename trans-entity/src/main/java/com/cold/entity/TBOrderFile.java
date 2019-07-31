@@ -18,9 +18,8 @@ import java.util.Date;
 @Getter
 @Setter
 public class TBOrderFile implements Serializable {
-    @GenericGenerator(name = "generator", strategy = "increment")
     @Id
-    @GeneratedValue(generator = "generator")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(unique = true, nullable = false)
     private Long fileId;
     private String filename;
@@ -28,8 +27,10 @@ public class TBOrderFile implements Serializable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "orderId", nullable = false)
     private TBOrder tbOrder;
-    private Integer fileType;//文件类型(1:任务文件 2:参考文件 3:术语文件 4:语料文件)
+    private Integer fileType;//文件类型(1:任务文件 2:参考文件)
     private Integer status;
+    private Integer processStatus;
+    private Boolean isAssigned;//是否已分配
     private Date uploadTime;
     private Integer isDelete;
     private Long sourceLanguageId;
