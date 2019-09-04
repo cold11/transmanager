@@ -31,10 +31,12 @@ public class TBTask implements Serializable {
     @JoinColumn(name = "orderId", nullable = false)
     private TBOrder tbOrder;//订单id
     private String orderNum;
+    private String taskTitle;//任务标题
     private String fileIds;//文件id
     private Date createTime;//分配时间
     private Integer transType;//流程
     private Double unitPrice;//单价
+    private Integer taskWords;//任务字数
     @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
     @JsonFormat(locale="zh", timezone="GMT+8", pattern="yyyy-MM-dd HH:mm:ss")
     private Date transTime;//翻译截止日期
@@ -46,7 +48,7 @@ public class TBTask implements Serializable {
     private String taskNo;//任务号
     private Integer taskStatus;
     @Column(columnDefinition = "bit(1) default false",nullable = false)
-    private Boolean canRevice;
+    private Boolean canRevice;//是否能领取  分配任务时文件处理完成后状态重置为true
     @Column(columnDefinition = "bit(1) default false",nullable = false)
     private Boolean isAssignTrans;//是否是指定翻译
     @Column(columnDefinition = "bit(1) default false",nullable = false)

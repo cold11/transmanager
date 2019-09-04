@@ -3,6 +3,7 @@ package com.cold.exception;
 import com.cold.common.ResultBaseDto;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.apache.shiro.authz.UnauthorizedException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -23,6 +24,8 @@ public class GlobalExceptionHandler {
         String msg = e.getMessage();
         if (msg == null || msg.equals("")) {
             msg = "服务器出错";
+        }else if(e instanceof UnauthorizedException){
+            msg = "没有权限";
         }
         log.error(msg,e);
         return new ResultBaseDto(false,"500",msg);

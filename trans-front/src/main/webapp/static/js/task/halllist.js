@@ -10,6 +10,8 @@ $(function () {
         $('#taskType').val(2);
         loadData('prooftask');
     });
+    $('#tasksmenu').addClass('show');
+    $('#publicTask').addClass('active');
 });
 window.operateEvents = {
     'click .download': function (e, value, row, index) {

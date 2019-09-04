@@ -6,10 +6,10 @@ package com.cold.dto;
  * @Description:
  */
 public enum TaskFileType {
-    TASK(0,"任务文件"),
-    REFERENCE(1,"参考文件"),
-    GLOSSARY(2,"术语文件"),
-    CORPUS(3,"语料文件");
+    TASK(1,"任务文件"),
+    REFERENCE(2,"参考文件"),
+    GLOSSARY(3,"术语文件"),
+    CORPUS(4,"语料文件");
     private final int value;
     private final String description;
     TaskFileType(int value,String description) {

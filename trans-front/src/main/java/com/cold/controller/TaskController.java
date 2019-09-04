@@ -14,7 +14,9 @@ import com.cold.util.ContextUtil;
 import com.cold.util.FileUtil;
 import com.cold.vo.OrderVo;
 import com.cold.vo.TaskVo;
+import com.cold.vo.UserTaskVo;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -37,6 +39,7 @@ import java.util.Map;
  * @Date: 2019/7/8 15:44
  * @Description:
  */
+@RequiresRoles("ROLE_TRANS")
 @Slf4j
 @Controller
 @RequestMapping("task")
@@ -47,7 +50,7 @@ public class TaskController extends BaseController {
     @RequestMapping("hall")
     public String hall(){
         Long userId = ContextUtil.getUserId();
-        List<TBUserTask> taskUserReceive = taskService.getTaskUserReceives(userId);
+        List<TBUserTask> taskUserReceive = taskService.getTaskUserReceives(userId,false);
         if(!taskUserReceive.isEmpty()){
             return "redirect:/task/unfinished";
         }
@@ -57,9 +60,9 @@ public class TaskController extends BaseController {
     @PostMapping(value = "hallList",produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @ResponseBody
     public Map<String, Object> hallList(TaskVo taskVo){
-        Pager pager = new Pager();
-        pager.setPageNo(taskVo.getPageNo());
-        if(taskVo.getPageSize()!=null)pager.setPageSize(taskVo.getPageSize());
+//        Pager pager = new Pager();
+//        pager.setPageNo(taskVo.getPageNo());
+//        if(taskVo.getPageSize()!=null)pager.setPageSize(taskVo.getPageSize());
         switch (taskVo.getTaskType()){
             case 1:
                 taskVo.setTaskStatus(TaskStatus.HALL.value());//翻译任务
@@ -72,15 +75,37 @@ public class TaskController extends BaseController {
              default:
                  break;
         }
-        pager.setCondition(taskVo);
+        //pager.setCondition(taskVo);
+        Pager pager = getPager(taskVo);
         taskService.getHallPageTask(pager);
+        return jsonResult(true,pager);
+    }
+
+    @RequestMapping("assignedTask")
+    public String assignedTask(Model model){
+
+        return "mytask/pmassigned_tasks";
+    }
+    /**
+     * 项目经理指定的任务列表
+     * @param taskVo
+     * @return
+     */
+    @PostMapping(value = "assignedList",produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @ResponseBody
+    public Map<String, Object> assignedList(UserTaskVo taskVo){
+        Long userId = ContextUtil.getUserId();
+        taskVo.setUserId(userId);
+        taskVo.setIsPmAssign(true);
+        Pager pager = getPager(taskVo);
+        taskService.getUserTaskPageTask(pager);
         return jsonResult(true,pager);
     }
 
     @RequestMapping("unfinished")
     public String unfinished(Model model){
         Long userId = ContextUtil.getUserId();
-        List<TBUserTask> taskUserReceive = taskService.getTaskUserReceives(userId);
+        List<UserTaskVo> taskUserReceive = taskService.getTaskUserReceiveList(userId,false);
         if(taskUserReceive.isEmpty()){
             return "redirect:/task/hall";
         }
@@ -93,8 +118,12 @@ public class TaskController extends BaseController {
     public Map<String,Object> giveupTask(Long taskId){
         TBUserTask userTask = taskService.findEntityById(TBUserTask.class,taskId);
         if(userTask!=null){
+            String url = "task/hall";
+            if(userTask.getIsPmAssign()){
+                url = "task/assignedTask";
+            }
             taskService.cancelTask(userTask);
-            return jsonResult(true,"task/hall");
+            return jsonResult(true,url);
         }else{
             return jsonResult(false,"task/hall");
         }

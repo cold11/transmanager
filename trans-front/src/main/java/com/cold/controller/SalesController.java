@@ -15,6 +15,7 @@ import com.cold.util.*;
 import com.cold.vo.UserVo;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -37,6 +38,7 @@ import java.util.Map;
  * @Date: 2019/7/15 09:26
  * @Description:
  */
+//@RequiresRoles("ROLE_SALE")
 @Slf4j
 @Controller
 @RequestMapping("sales")

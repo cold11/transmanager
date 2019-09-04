@@ -5,9 +5,8 @@
        xsi:schemaLocation="
          http://www.springframework.org/schema/beans
          http://www.springframework.org/schema/beans/spring-beans.xsd
-       http://www.springframework.org/schema/aop
-       http://www.springframework.org/schema/aop/spring-aop.xsd">
-
+         http://www.springframework.org/schema/aop
+         http://www.springframework.org/schema/aop/spring-aop.xsd">
     <!-- 凭证匹配器 -->
     <bean id="credentialsMatcher" class="com.cold.shiro.RetryLimitHashedCredentialsMatcher">
         <constructor-arg ref="shiroCacheManager" />
@@ -68,18 +67,6 @@
         </property>
     </bean>
 
-
-    <bean id="lifecycleBeanPostProcessor" class="org.apache.shiro.spring.LifecycleBeanPostProcessor"/>
-    <!-- 开启Shiro的注解进行安全逻辑验证 -->
-    <bean class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator"
-          depends-on="lifecycleBeanPostProcessor">
-        <property name="proxyTargetClass" value="true"/>
-    </bean>
-
-    <bean class="org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor">
-        <!-- 必须注入安全管理器 -->
-        <property name="securityManager" ref="securityManager" />
-    </bean>
 
     <!-- shiro整合echcache的缓存配置 -->
     <!-- 配置Shiro的平台缓存管理 -->

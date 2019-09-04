@@ -5,6 +5,7 @@ import com.cold.entity.TBTask;
 import com.cold.entity.TBUserTask;
 import com.cold.entity.TBUserTaskFile;
 import com.cold.page.Pager;
+import com.cold.vo.UserTaskVo;
 
 import java.util.List;
 
@@ -21,7 +22,8 @@ public interface ITaskService extends IBaseService<TBTask> {
      * @param userId
      * @return
      */
-    List<TBUserTask> getTaskUserReceives(long userId);
+    List<TBUserTask> getTaskUserReceives(long userId,Boolean isPmAssign);
+    List<UserTaskVo> getTaskUserReceiveList(long userId,Boolean isPmAssign);
 
     /**
      * 根据任务号任务类型查询任务
@@ -57,4 +59,6 @@ public interface ITaskService extends IBaseService<TBTask> {
     void getHallPageTask(Pager pager);
 
     void saveUserTaskFile(TBUserTaskFile userTaskFile);
+
+    void getUserTaskPageTask(Pager pager);
 }

@@ -32,10 +32,13 @@ public class TBUserTask implements Serializable {
     private Date endTime;
     private String orderNum;
     private String taskNo;
+    private Integer taskWords;//任务字数
     private Integer taskType;//任务类型
     @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
     @JsonFormat(locale="zh", timezone="GMT+8", pattern="yyyy-MM-dd HH:mm:ss")
     private Date expirationDate;//到期时间
+    @Column(columnDefinition = "bit(1) default false",nullable = false)
+    private Boolean isPmAssign;//是否项目经理指定任务
 //    @Column(length = 200)
 //    private String uploadPath;
 }

@@ -2,7 +2,9 @@ package com.cold.controller;
 
 import com.cold.cache.CacheService;
 import com.cold.entity.TBLanguage;
+import com.cold.page.Pager;
 import com.cold.util.Global;
+import com.cold.vo.BaseVo;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -141,7 +143,13 @@ public class BaseController {
 //    }
 
 
-
+    protected Pager getPager(BaseVo vo){
+        Pager pager = new Pager();
+        pager.setPageNo(vo.getPageNo());
+        if(vo.getPageSize()!=null)pager.setPageSize(vo.getPageSize());
+        pager.setCondition(vo);
+        return pager;
+    }
 
 
     protected String getBaseDir(){

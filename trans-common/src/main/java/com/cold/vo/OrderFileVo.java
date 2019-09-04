@@ -28,14 +28,16 @@ public class OrderFileVo extends BaseVo {
     private Integer transType;//流程
     private Boolean isAssigned;
     private Integer fileType;
+    private Integer words;//字数
 
     public OrderFileVo() {
     }
 
-    public OrderFileVo(Long fileId, String filename,Integer fileType, String sourceLanName, String targetLanName) {
+    public OrderFileVo(Long fileId, String filename,Integer fileType,Integer words, String sourceLanName, String targetLanName) {
         this.fileId = fileId;
         this.filename = filename;
         this.fileType =  fileType;
+        this.words = words;
         this.sourceLanName = sourceLanName;
         this.targetLanName = targetLanName;
     }

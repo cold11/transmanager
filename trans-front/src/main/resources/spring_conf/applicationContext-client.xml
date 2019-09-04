@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:jaxws="http://cxf.apache.org/jaxws" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+    http://www.springframework.org/schema/beans/spring-beans.xsd
+    http://cxf.apache.org/jaxws 
+    http://cxf.apache.org/schemas/jaxws.xsd">
+    <!--<http-conf:conduit name="*.http-conduit">-->
+    	<!--<http-conf:client ConnectionTimeout="10000" ReceiveTimeout="600000"/>-->
+	<!--</http-conf:conduit>-->
+<!--	<jaxws:client id="translationService"-->
+<!--		address="http://106.120.208.154:8082/Transformer/services/MachineTranslationService?wsdl"-->
+<!--		serviceClass="com.cold.client.IMachineTranslationService" />-->
+	<jaxws:client id="machineTranslationService"
+		address="http://192.168.3.113:8082/Transformer/services/MachineTranslationService?wsdl"
+		serviceClass="com.cold.client.IMachineTranslationService" />
+	<jaxws:client id="searchService"
+				  address="http://114.251.8.179:88/searchServer/services/searchService?wsdl"
+				  serviceClass="com.cold.searchservice.client.ISearchService" />
+</beans>

@@ -71,6 +71,7 @@ $(document).ready(function() {
         // },
         fields: {
             'title': '订单标题:required',
+            'unitPrice' :'单价:required;integer[+]',
             'customerName' :'客户名称:required',
             'expirationDate':'到期时间:required'
         }
@@ -97,7 +98,7 @@ $(document).ready(function() {
             e.targetLanName = checkText2;
             e.targetLanguageId = $('#tgtLan_'+uuid).val();
             e.fileType = $('#filetypecheck_'+uuid).val();
-            console.log(111,e);
+            e.words = $('#filewords_'+uuid).val();
         });
         var orderJson = $('#orderForm').serializeJson();
         orderJson.tbOrderFiles = files;
@@ -196,8 +197,11 @@ function renderSwitch(fileId) {
         size:"normal",
         onSwitchChange:function(event,state) {
             if (state == true) {
+                let tdhtml = '<input type="number" id="filewords_'+fileId+'" />';
+                $('#td_'+fileId).html(tdhtml);
                 $(this).val("1");
             } else {
+                $('#td_'+fileId).html('');
                 $(this).val("2");
             }
         }

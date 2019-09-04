@@ -15,13 +15,17 @@ import java.util.List;
 @Setter
 public class UserTaskVo extends BaseVo {
     private Long userTaskId;
+    private Long taskId;
     private Long userId;
     private String taskNo;
-    private Date beginTime;
-    private Date endTime;
+//    private Date beginTime;
+//    private Date endTime;
     private Integer taskType;//任务类型
+    private String taskTypeDescribe;
     private Date expirationDate;
-    private int transFileCount;
-    private List<String> filenames;
+    private int transFileCount;//翻译文件个数
+    private int referenceFileCount;//参考文件个数
+    private String filenames;
+    private Boolean isPmAssign;
 
 }

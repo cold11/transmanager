@@ -13,9 +13,11 @@ import java.util.List;
  */
 public interface ITaskDao extends IBaseDao {
     TBTask getTaskByTaskNo(String taskNo);
-    List<TBUserTask> getTaskUserReceives(long userId);
+    List<TBUserTask> getTaskUserReceives(long userId,Boolean isPmAssign);
     TBUserTask getTaskUserByTaskNo(String taskNo,Integer taskType);
     int getTaskUserReceivesCount(long userId);
     //任务大厅待领取任务列表
     void getHallPageTask(Pager pager);
+    //我的任务列表
+    void getUserTaskPageTask(Pager pager);
 }

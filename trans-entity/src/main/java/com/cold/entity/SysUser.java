@@ -27,6 +27,7 @@ public class SysUser implements java.io.Serializable {
     private String username;
     private String password;
     private String name;
+    private String fieldIds;
     private Integer isLocked;
     private Integer isDisable;
     private Date disableDate;

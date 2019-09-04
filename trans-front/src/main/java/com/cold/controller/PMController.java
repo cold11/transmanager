@@ -15,10 +15,12 @@ import com.cold.util.Global;
 import com.cold.util.ZipUtil;
 import com.cold.vo.OrderFileVo;
 import com.cold.vo.OrderVo;
+import com.cold.vo.TaskVo;
 import com.cold.vo.UserVo;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -37,6 +39,7 @@ import java.util.Map;
  * @Description:
  */
 @Slf4j
+//@RequiresRoles("ROLE_PM")
 @Controller
 @RequestMapping("pm")
 public class PMController extends BaseController {
@@ -45,8 +48,8 @@ public class PMController extends BaseController {
     private IOrderFileService orderFileService;
     @Autowired
     private IOrderService orderService;
-    @Autowired
-    private IUserService userService;
+//    @Autowired
+//    private IUserService userService;
     @Autowired
     private ITaskService taskService;
     @RequestMapping("assign")
@@ -126,5 +129,25 @@ public class PMController extends BaseController {
             log.error("{}文件压缩失败",orderId);
         }
         return jsonResult(success,orderId);
+    }
+
+    /**
+     * 待领取任务列表
+     * @return
+     */
+    @RequestMapping(value = "taskList",produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @ResponseBody
+    public Map<String, Object> taskList(TaskVo taskVo) {
+        return jsonResult(true,"");
+    }
+
+    /**
+     * 已被领取的任务列表
+     * @return
+     */
+    @RequestMapping
+    @ResponseBody
+    public Map<String, Object> receivedList() {
+        return jsonResult(true,"");
     }
 }

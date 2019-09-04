@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"  xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+      layout:decorate="~{common/layout}">
+<head>
+    <meta charset="UTF-8">
+    <title>任务管理</title>
+    <link rel="stylesheet" th:href="@{/static/js/plugins/daterangepicker/daterangepicker.css}">
+    <link rel="stylesheet" th:href="@{/static/js/plugins/bootstrap-table/bootstrap-table.css}" type="text/css"/>
+    <link th:href="@{/static/js/plugins/bootstrap-table/extensions/page-jumpto/bootstrap-table-jumpto.css}" rel="stylesheet">
+    <script>
+
+    </script>
+    <style>
+        .btn-white {
+            color: inherit;
+            background: white;
+            border: 1px solid #e7eaec;
+        }
+    </style>
+</head>
+<body>
+<th:block layout:fragment = "content">
+    <input type="hidden" id="taskType" />
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h3>任务管理</h3>
+                </div>
+                <br/>
+                <div class="row">
+                    <div class="col-lg-10 col-sm-9">
+                        <div class="row">
+                            <div class="col-lg-6 col-sm-6">
+                                <div class="input-group">
+                                    <div class="input-group-btn open">
+                                        <button class="btn btn-white" type="button">任务编号</button>
+                                    </div>
+                                    <input type="text" class="form-control" id="taskNo" style="width: max-content" placeholder="请输入任务编号">
+                                </div>
+                            </div>
+
+                            <div class="col-lg-6 col-sm-6">
+                                <div class="input-group">
+                                    <div class="input-group-btn">
+                                        <button class="btn btn-white" type="button"><i class="fa fa-calendar"></i>领取时间
+                                        </button>
+                                    </div>
+                                    <input type="text" class="form-control date-rage" style="width: max-content" id="dataRange" readonly/>
+                                    <input type="hidden" id = "beginTime" name="beginTime" class="form-control" />
+                                    <input type="hidden" id = "endTime" name="endTime" class="form-control" />
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="col-lg-2 col-sm-3">
+                        <div class="row">
+                            <div>
+
+                                <button type="button" class="btn btn-primary " onclick="search();">
+                                    <i class="fa fa-search"></i>&nbsp;搜索
+                                </button>
+
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <br/>
+                <div>
+                    <table id="tasksTab" class="table table-striped">
+
+                    </table>
+                </div>
+
+
+
+            </div>
+        </div>
+    </div>
+</th:block>
+<th:block layout:fragment = "bodyAssets">
+    <script th:src="@{/static/js/moment.min.js}"></script>
+    <script th:src="@{/static/js/plugins/bootstrap-table/bootstrap-table.js}"></script>
+    <script th:src="@{/static/js/plugins/bootstrap-table/locale/bootstrap-table-zh-CN.js}"></script>
+    <script th:src="@{/static/js/plugins/bootstrap-table/extensions/page-jumpto/bootstrap-table-jumpto.min.js}"></script>
+    <script th:src="@{/static/js/plugins/daterangepicker/daterangepicker.min.js}"></script>
+    <script th:src="@{/static/js/datepicker/rangepicker.js}"></script>
+    <script th:src="@{/static/js/pm/tasks.js}"></script>
+</th:block>
+</body>
+</html>

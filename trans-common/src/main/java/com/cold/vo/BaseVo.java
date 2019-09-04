@@ -2,6 +2,7 @@ package com.cold.vo;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
 
@@ -13,9 +14,9 @@ import java.util.Date;
 @Getter
 @Setter
 public class BaseVo {
-    //@DateTimeFormat
+    @DateTimeFormat
     protected Date beginTime;
-    //@DateTimeFormat
+    @DateTimeFormat
     protected Date endTime;
 
     private Integer pageNo;

@@ -28,6 +28,7 @@ public class TBOrderFile implements Serializable {
     @JoinColumn(name = "orderId", nullable = false)
     private TBOrder tbOrder;
     private Integer fileType;//文件类型(1:任务文件 2:参考文件)
+    private Integer words;//字数
     private Integer status;
     private Integer processStatus;
     private Boolean isAssigned;//是否已分配

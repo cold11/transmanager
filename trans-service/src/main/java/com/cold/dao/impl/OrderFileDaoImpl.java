@@ -31,7 +31,7 @@ public class OrderFileDaoImpl extends BaseDaoImpl implements IOrderFileDao {
     @Override
     public void getOrderFiles(Pager pager) {
         //OrderFileVo vo = new OrderFileVo(1l,"filename","filePath",1l,"orderNum",null,"sourceLanId","sourceLanName","targetLanId","targetLanId");
-        String hql = "select new com.cold.vo.OrderFileVo(fileId,filename,fileType,sourceLanName,targetLanName) from TBOrderFile";
+        String hql = "select new com.cold.vo.OrderFileVo(fileId,filename,fileType,words,sourceLanName,targetLanName) from TBOrderFile";
         String countHql = "select count(1) from TBOrderFile";
         String whereHql = "";
         Map<String,Object> paramMap = Maps.newHashMap();
