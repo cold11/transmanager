@@ -49,7 +49,7 @@ public class TranslationController extends BaseController {
             //公共任务
             List<TBUserTask> userReceiveList = taskUserReceive.stream().filter(t->t.getIsPmAssign()==null||t.getIsPmAssign()==false).collect(Collectors.toList());
             //指定任务
-            List<TBUserTask> pmAssignList = taskUserReceive.stream().filter(t->t.getIsPmAssign()==true).collect(Collectors.toList());
+            //List<TBUserTask> pmAssignList = taskUserReceive.stream().filter(t->t.getIsPmAssign()==true).collect(Collectors.toList());
             String msg = "";
             if(!userReceiveList.isEmpty()){
                 msg = "unfinished";

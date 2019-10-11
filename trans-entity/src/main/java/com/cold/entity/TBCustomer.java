@@ -25,6 +25,8 @@ public class TBCustomer implements Serializable {
     private Long customerId;
     @Column(length = 100)
     private String name;
+    @Column(length = 100)
+    private String code;
     @Column(length = 500)
     private String requirement;
     //private String

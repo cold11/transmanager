@@ -1,10 +1,14 @@
 package com.cold.controller;
 
 import com.cold.cache.CacheService;
+import com.cold.dto.TaskStatus;
 import com.cold.entity.TBLanguage;
 import com.cold.page.Pager;
 import com.cold.util.Global;
 import com.cold.vo.BaseVo;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +17,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
@@ -155,4 +160,5 @@ public class BaseController {
     protected String getBaseDir(){
         return Global.getConfig("upload.path");
     }
+
 }

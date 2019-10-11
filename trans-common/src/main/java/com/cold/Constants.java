@@ -21,6 +21,7 @@ public class Constants {
     public static final String PROOFFILE = "prooffile";
     public static final String TRANS_FILE_RESULT = "transfileResult";
     public static final String PROOFFILE_RESULT = "prooffileResult";
+    public static final String PMFILE_RESULT = "pmfileResult";
     public static final String XLIFFPATH = "xliff";
     public static final Long USER_TRANS = 2l;
     public static final Long USER_PROOF= 3l;

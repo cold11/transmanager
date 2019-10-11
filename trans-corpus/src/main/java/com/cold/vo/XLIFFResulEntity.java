@@ -16,5 +16,6 @@ import java.util.List;
 public class XLIFFResulEntity {
     private String transUnitId;
     private List<SegTargetUnit> segTargetUnits;
+    private List<TmxEntity> tmxEntities;//匹配结果
     //private String trans;//预处理译文
 }

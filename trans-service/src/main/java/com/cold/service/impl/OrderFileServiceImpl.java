@@ -39,4 +39,9 @@ public class OrderFileServiceImpl extends BaseServiceImpl<TBOrderFile> implement
             orderFileDao.update(tbOrder);
         }
     }
+
+    @Override
+    public List<TBOrderFile> getOrderFilesByOrderId(Long orderId,Integer fileType) {
+        return orderFileDao.getOrderFilesByOrderId(orderId,fileType);
+    }
 }

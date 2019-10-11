@@ -1,5 +1,6 @@
 package com.cold.dao;
 
+import com.cold.entity.TBOrderFile;
 import com.cold.page.Pager;
 import com.cold.vo.OrderFileVo;
 
@@ -14,4 +15,5 @@ public interface IOrderFileDao extends IBaseDao {
     List<OrderFileVo> getOrderFiles(Integer status);
     void getOrderFiles(Pager pager);
     boolean checkFileUnAssigned(Long orderId);//未分配的任务
+    List<TBOrderFile> getOrderFilesByOrderId(Long orderId,Integer fileType);
 }

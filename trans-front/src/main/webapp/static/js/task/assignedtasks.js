@@ -129,11 +129,11 @@ window.operateEvents = {
 function operateFormatter(value, row, index) {
     return [
         '<div class="btn-group btn-group-sm">',
-        '<button type="button" class="btn btn-outline-success corpusmatch"><i class="fa fa-file-excel-o"></i>预处理</button>',
-        '<button type="button" class="btn btn-outline-primary download"><i class="fa fa-download"></i>下载</button>',
-        '<button type="button" class="btn btn-outline-info upload"><i class="fa fa-upload"></i>上传</button>',
+        // '<button type="button" class="btn btn-outline-success corpusmatch"><i class="fa fa-file-excel-o"></i>预处理</button>',
+        '<button type="button" class="btn btn-outline-primary download"><i class="fa fa-download"></i>下载原文</button>',
+        '<button type="button" class="btn btn-outline-info upload"><i class="fa fa-upload"></i>上传译文</button>',
         '<button type="button" class="btn btn-outline-danger giveup"><i class="fa fa-trash"></i>放弃</button>',
-        '</a> </div> '
+        '</div> '
     ].join('');
 }
 

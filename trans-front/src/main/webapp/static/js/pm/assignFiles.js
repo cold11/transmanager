@@ -1,4 +1,5 @@
 $(function () {
+    $('#assignmenu').addClass('active');
     loadData('orderList');
     $("select.js-data-select2-ajax").each(function () {
         var $this = $(this);
@@ -51,7 +52,7 @@ $(function () {
                         }
                     };
                 }
-            },
+            }
 
         });
     });
@@ -211,8 +212,14 @@ function loadData(tabId) {
                 valign: 'middle'
             },
             {
-                field: 'caseNo',
-                title: '案号',
+                field: 'orderWords',
+                title: '字数',
+                align: 'center',
+                valign: 'middle'
+            },
+            {
+                field: 'caseFiles',
+                title: '案件数',
                 align: 'center',
                 valign: 'middle'
             },
@@ -342,7 +349,10 @@ var InitSubTable = function (index, row, $detail) {
                 align: 'center',
                 valign: 'middle',
                 formatter:function (value,row)  {
+                    if(row.fileType==1)
                         return row.sourceLanName+' - '+row.targetLanName;
+                    else
+                        return '-';
                 }
                 // footerFormatter: function (rows) {
                 //     var labelText = "字数:";

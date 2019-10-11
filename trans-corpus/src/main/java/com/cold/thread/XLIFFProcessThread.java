@@ -34,6 +34,8 @@ public class XLIFFProcessThread implements Callable<XLIFFResulEntity> {
     @Override
     public XLIFFResulEntity call(){
         XLIFFResulEntity xliffResulEntity = new XLIFFResulEntity();
+        List<TmxEntity> tmxEntities = Lists.newArrayList();
+        xliffResulEntity.setTmxEntities(tmxEntities);
         xliffResulEntity.setTransUnitId(transUnit.getId());
         List<SegTargetUnit> segTargetUnits = Lists.newArrayList();
         xliffResulEntity.setSegTargetUnits(segTargetUnits);
@@ -46,19 +48,19 @@ public class XLIFFProcessThread implements Callable<XLIFFResulEntity> {
                 String id = srcSegment.getId();
                 SegTargetUnit segTargetUnit = new SegTargetUnit();
                 segTargetUnit.setId(id);
-                String trans = "";
                 TextFragment tgtFragment = tgtSegments.get(index++).text;
                 TmxEntity tmxEntity = new TmxEntity(transUnit.getSrcLan(), transUnit.getTgtLan(), src, null, 0);
                 searchHandler.search(tmxEntity);
                 if (tmxEntity.getPercent() > 0) {
-                    trans = tmxEntity.getTranslation();
-                    segTargetUnit.setMatchType(MatchType.TM);
-                    segTargetUnit.setPercent(Math.round(tmxEntity.getPercent()) * 100 + "");
-                } else {
-                    trans = mtTranslate.translate(machineTranslationService, transUnit.getSrcLan(), transUnit.getTgtLan(), src);
-                    segTargetUnit.setMatchType(MatchType.MT);
-                    segTargetUnit.setPercent("95");
+//                    trans = tmxEntity.getTranslation();
+//                    segTargetUnit.setMatchType(MatchType.TM);
+//                    segTargetUnit.setPercent(Math.round(tmxEntity.getPercent() * 100) + "");
+                    tmxEntities.add(tmxEntity);
                 }
+                String trans = mtTranslate.translate(machineTranslationService, transUnit.getSrcLan(), transUnit.getTgtLan(), src);
+                segTargetUnit.setMatchType(MatchType.MT);
+                segTargetUnit.setPercent("95");
+
                 log.info(Thread.currentThread().getName() + ">>>>>" + src + ">>>" + trans);
                 tgtFragment.setCodedText(trans, true);
                 segTargetUnits.add(segTargetUnit);

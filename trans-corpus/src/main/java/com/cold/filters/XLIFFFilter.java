@@ -8,7 +8,10 @@ import com.cold.search.SearchHandler;
 import com.cold.searchservice.client.ISearchService;
 import com.cold.searchservice.client.SearchServiceImplService;
 import com.cold.thread.XLIFFProcessThread;
+import com.cold.tmx.WriteTmx;
+import com.cold.util.FileUtil;
 import com.cold.vo.SegTargetUnit;
+import com.cold.vo.TmxEntity;
 import com.cold.vo.XLIFFResulEntity;
 import com.cold.xliff.*;
 import com.google.common.collect.Lists;
@@ -174,7 +177,14 @@ public class XLIFFFilter {
             });
             filter.close();
             log.info(">>>>>>>>>"+outfilename);
-            writeSdlDefs(outfilename,xliffResulEntities);
+            List<TmxEntity> tmxEntities = writeSdlDefs(outfilename,xliffResulEntities);
+            File outXLIFFFile = new File(outfilename);
+            String tmxFile = outXLIFFFile.getParent()+File.separator+FileUtil.getFileName(outXLIFFFile.getName())+".tmx";
+            if(!tmxEntities.isEmpty()){
+                new WriteTmx().generateTmx(languagePair.getSourceLanguage(),languagePair.getTargetLanguage(),tmxEntities,tmxFile);
+            }
+
+            resMap.put("tmxfile",tmxFile);
             resMap.put("success",true);
         }catch (Exception e){
             log.error("解析发生异常",e);
@@ -185,10 +195,12 @@ public class XLIFFFilter {
     }
 
 
-    private static void writeSdlDefs(String outFile,List<XLIFFResulEntity> xliffResulEntities){
+    private static List<TmxEntity> writeSdlDefs(String outFile,List<XLIFFResulEntity> xliffResulEntities){
+        List<TmxEntity> tmxEntities = Lists.newArrayList();
         XLIFFParse xliffParse = new XLIFFParse();
         xliffParse.load(outFile);
         xliffResulEntities.forEach(xliffResulEntity -> {
+            tmxEntities.addAll(xliffResulEntity.getTmxEntities());
             String unitId = xliffResulEntity.getTransUnitId();
             Element transUnitelement = xliffParse.getSingleElement(String.format("//%s:trans-unit[@id='%s']",xliffParse.XMLNS_PREFIX,unitId));
             if(transUnitelement!=null){
@@ -207,6 +219,7 @@ public class XLIFFFilter {
 
         });
         xliffParse.save(outFile);
+        return tmxEntities;
     }
 
     public static void main(String[] args) {

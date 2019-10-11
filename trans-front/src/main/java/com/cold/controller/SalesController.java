@@ -9,9 +9,11 @@ import com.cold.dto.TaskType;
 import com.cold.entity.TBCustomer;
 import com.cold.entity.TBOrder;
 import com.cold.entity.TBOrderFile;
+import com.cold.page.Pager;
 import com.cold.service.ICustomerService;
 import com.cold.service.IOrderService;
 import com.cold.util.*;
+import com.cold.vo.OrderVo;
 import com.cold.vo.UserVo;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
@@ -38,7 +40,7 @@ import java.util.Map;
  * @Date: 2019/7/15 09:26
  * @Description:
  */
-//@RequiresRoles("ROLE_SALE")
+@RequiresRoles("ROLE_SALE")
 @Slf4j
 @Controller
 @RequestMapping("sales")
@@ -126,5 +128,17 @@ public class SalesController extends BaseController {
         orderFile.setUploadTime(new Date());
         orderFile.setStatus(OrderFileStatus.INIT.value());
         return jsonResult(true,orderFile);
+    }
+
+    @RequestMapping("orderList")
+    public String orderList(){
+        return "sales/order_list";
+    }
+    @RequestMapping(value = "orderListData",produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @ResponseBody
+    public Map<String, Object> orderListData(OrderVo orderVo){
+        Pager pager = getPager(orderVo);
+        orderService.getResult(pager);
+        return jsonResult(true,"");
     }
 }

@@ -17,4 +17,5 @@ public interface IUserDao extends IBaseDao {
     List<UserVo> findUserByRole(long roleId);
     void searchUserByRole(Pager pager);
     List<UserVo> findFreeUserByRole(long roleId);
+    void getUserPager(Pager pager);
 }

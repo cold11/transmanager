@@ -1,12 +1,16 @@
 package com.cold.controller;
 
 import com.cold.Constants;
+import com.cold.dto.TaskStatus;
 import com.cold.entity.TBCustomer;
 import com.cold.page.Pager;
 import com.cold.service.ICustomerService;
 import com.cold.service.IUserService;
 import com.cold.vo.UserVo;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -66,5 +70,20 @@ public class FrontController extends BaseController {
            userService.searchUserByRole(pager);
        }
         return jsonResult(true, pager);
+    }
+
+    @RequestMapping(value = "getTaskStatus",produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @ResponseBody
+    public String getTaskStatus(){
+        TaskStatus[] taskStatuses = TaskStatus.values();
+        JsonArray jsonArray = new JsonArray();
+        for (TaskStatus taskStatus : taskStatuses){
+            JsonObject jsonObject = new JsonObject();
+            jsonObject.addProperty("value",taskStatus.value());
+            jsonObject.addProperty("text",taskStatus.description());
+            jsonArray.add(jsonObject);
+        }
+        String json = jsonArray.toString();
+        return json;
     }
 }

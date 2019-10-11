@@ -37,6 +37,12 @@ public class TBTask implements Serializable {
     private Integer transType;//流程
     private Double unitPrice;//单价
     private Integer taskWords;//任务字数
+    @Column(length = 300)
+    private String languages;//任务语种
+    private Integer transFileCount;//案件数
+    private Integer referenceFileCount;//参考文件数
+    @Column(length = 500)
+    private String filenames;
     @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
     @JsonFormat(locale="zh", timezone="GMT+8", pattern="yyyy-MM-dd HH:mm:ss")
     private Date transTime;//翻译截止日期

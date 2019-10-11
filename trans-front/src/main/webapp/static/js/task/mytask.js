@@ -55,21 +55,26 @@ function loadData(tabId) {
                 valign: 'middle',
                 sortable:true,
                 formatter:function (value,row) {
-                    var date = new Date(value);
-                    return date.toLocaleString();
+                    if(value){
+                        var date = new Date(value);
+                        return date.toLocaleString();
+                    }else{
+                        return '-';
+                    }
+
 
                 }
             },
-            {
-                field: 'transFileCount',
-                title: '翻译/参考文件个数',
-                align: 'center',
-                valign: 'middle',
-                formatter:function (value,row) {
-                    return value+'/'+row.referenceFileCount;
-
-                }
-            },
+            // {
+            //     field: 'transFileCount',
+            //     title: '翻译/参考文件个数',
+            //     align: 'center',
+            //     valign: 'middle',
+            //     formatter:function (value,row) {
+            //         return value+'/'+row.referenceFileCount;
+            //
+            //     }
+            // },
             {
                 field: 'filenames',
                 title: '文件名',

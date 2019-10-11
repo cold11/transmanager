@@ -10,8 +10,10 @@ import com.cold.service.ITaskService;
 import com.cold.util.BeanUtils;
 import com.cold.util.ContextUtil;
 import com.cold.util.Global;
+import com.cold.vo.TaskVo;
 import com.cold.vo.UserTaskVo;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +26,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -61,6 +64,11 @@ public class TaskServiceImpl extends BaseServiceImpl<TBTask> implements ITaskSer
         return taskDao.getTaskUserByTaskNo(taskNo,taskType);
     }
 
+    @Override
+    public TBUserTask getTaskUserByTaskId(Long taskId) {
+        return taskDao.getTaskUserByTaskId(taskId);
+    }
+
     @Transactional(propagation= Propagation.REQUIRED)
     @Override
     public void reviceTask(TBTask task,Integer taskType) {
@@ -75,6 +83,7 @@ public class TaskServiceImpl extends BaseServiceImpl<TBTask> implements ITaskSer
         receivedTask.setBeginTime(new Date());
         receivedTask.setTbTask(task);
         receivedTask.setTaskType(taskType);
+        receivedTask.setIsPmAssign(false);
         if(taskType==TaskType.TRANS.value())
             task.setTaskStatus(TaskStatus.TransReceived.value());
         else if(taskType==TaskType.PROOF.value())
@@ -82,22 +91,23 @@ public class TaskServiceImpl extends BaseServiceImpl<TBTask> implements ITaskSer
         taskDao.save(receivedTask);
     }
 
-    @Transactional(propagation= Propagation.REQUIRED)
+    //@Transactional(propagation= Propagation.REQUIRED)
     @Override
     public void cancelTask(TBUserTask userTask) {
         TBTask tbTask = userTask.getTbTask();
         int taskType = userTask.getTaskType();
         if(taskType==TaskType.TRANS.value()){
             if(userTask.getIsPmAssign()){//项目经理分配的任务,放弃后需重新分配
-                TBOrder tbOrder = tbTask.getTbOrder();
-                tbOrder.setStatus(OrderStatus.INIT.value());
-                String[] fileids = StringUtils.split(tbTask.getFileIds(),",");
-                for (String fileId : fileids) {
-                    TBOrderFile orderFile = taskDao.findEntityById(TBOrderFile.class, Long.parseLong(fileId));
-                    orderFile.setIsAssigned(false);
-                    orderFile.setStatus(OrderFileStatus.INIT.value());
-                    orderFile.setProcessStatus(OrderFileStatus.INIT.value());
-                }
+                updateTbTaskRedistribute(tbTask);
+//                TBOrder tbOrder = tbTask.getTbOrder();
+//                tbOrder.setStatus(OrderStatus.INIT.value());
+//                String[] fileids = StringUtils.split(tbTask.getFileIds(),",");
+//                for (String fileId : fileids) {
+//                    TBOrderFile orderFile = taskDao.findEntityById(TBOrderFile.class, Long.parseLong(fileId));
+//                    orderFile.setIsAssigned(false);
+//                    orderFile.setStatus(OrderFileStatus.INIT.value());
+//                    orderFile.setProcessStatus(OrderFileStatus.INIT.value());
+//                }
                 taskDao.delete(userTask);
             }else{
                 tbTask.setTaskStatus(TaskStatus.HALL.value());
@@ -108,6 +118,27 @@ public class TaskServiceImpl extends BaseServiceImpl<TBTask> implements ITaskSer
         taskDao.delete(userTask);
     }
 
+    //@Transactional(propagation= Propagation.REQUIRED)
+    @Override
+    public void updateTbTaskRedistribute(Long taskId) {
+        TBTask tbTask = taskDao.findEntityById(TBTask.class,taskId);
+        updateTbTaskRedistribute(tbTask);
+    }
+
+    //@Transactional(propagation= Propagation.REQUIRED)
+    @Override
+    public void updateTbTaskRedistribute(TBTask tbTask){
+        TBOrder tbOrder = tbTask.getTbOrder();
+        tbOrder.setStatus(OrderStatus.INIT.value());
+        String[] fileids = StringUtils.split(tbTask.getFileIds(),",");
+        for (String fileId : fileids) {
+            TBOrderFile orderFile = taskDao.findEntityById(TBOrderFile.class, Long.parseLong(fileId));
+            orderFile.setIsAssigned(false);
+            orderFile.setStatus(OrderFileStatus.INIT.value());
+            orderFile.setProcessStatus(OrderFileStatus.INIT.value());
+        }
+        taskDao.delete(tbTask);
+    }
     @Override
     public void saveTask(TBTask task,List<FileObj> taskFilePathList) {
         TBOrder tbOrder = task.getTbOrder();
@@ -162,6 +193,8 @@ public class TaskServiceImpl extends BaseServiceImpl<TBTask> implements ITaskSer
             taskDao.save(tbUserTask);
         });
 
+//        int transFileCount = 0;
+//        Set<String> languageSet = Sets.newHashSet();
         //更新文件状态到已分配
         List<String> fileidList = Arrays.asList(StringUtils.split(task.getFileIds(),","));
         fileidList.forEach(fileid->{
@@ -173,12 +206,39 @@ public class TaskServiceImpl extends BaseServiceImpl<TBTask> implements ITaskSer
             FileObj fileObj = new FileObj(filepath,orderFile.getFilename());
             taskFilePathList.add(fileObj);
         });
+        setTaskFilePropety(task);
         orderFileService.updateOrderStatusNoAssigned(tbOrder.getOrderId());//全部分配,更新订单状态
     }
 
     @Override
     public void getHallPageTask(Pager pager) {
         taskDao.getHallPageTask(pager);
+        List<TBTask> tbTasks = pager.getResult();
+        List<TaskVo> taskVos = tbTasks.stream().map(task ->{
+            TBOrder tbOrder = task.getTbOrder();
+            TBCustomer customer = tbOrder.getCustomer();
+            TaskVo taskVo = new TaskVo();
+            BeanUtils.copyNotNullProperties(task,taskVo);
+            taskVo.setCustomer(customer.getCode());
+            taskVo.setTitle(task.getTaskTitle());
+            taskVo.setTaskStatusDescribe(TaskStatus.fromValue(task.getTaskStatus()).description());
+            taskVo.setTransTypeDescribe(TransType.fromValue(task.getTransType()).description());
+//            String[] fileids = StringUtils.split(task.getFileIds(), ",");
+//            int transFileCount = 0;
+//            Set<String> languageSet = Sets.newHashSet();
+//            for (String fileId : fileids) {
+//                TBOrderFile orderFile = taskDao.findEntityById(TBOrderFile.class, Long.parseLong(fileId));
+//                Integer fileType = orderFile.getFileType();
+//                if (fileType == TaskFileType.TASK.value()) {
+//                    transFileCount++;
+//                    languageSet.add(orderFile.getSourceLanName()+"-"+orderFile.getTargetLanName());
+//                }
+//            }
+//            taskVo.setTransFileCount(transFileCount);
+//            taskVo.setLanguages(StringUtils.join(languageSet,","));
+            return taskVo;
+        }).collect(Collectors.toList());
+        pager.setResult(taskVos);
     }
 
     @Override
@@ -187,19 +247,19 @@ public class TaskServiceImpl extends BaseServiceImpl<TBTask> implements ITaskSer
         TBTask task = userTask.getTbTask();
         int transType = task.getTransType();
         int taskType = userTask.getTaskType();
-        //更新任务状态
-        if(transType==TransType.TRANS.value()){
-            task.setTaskStatus(TaskStatus.ProofComplete.value());
-//            if(taskType==TaskType.TRANS.value()){
-//                task.setTaskStatus(TaskStatus.ProofComplete.value());
-//            }
-        }else if(transType==TransType.TRANSANDPROOF.value()){
-            if(taskType==TaskType.TRANS.value()){
-                task.setTaskStatus(TaskStatus.TransComplete.value());
-            }else{
+        if(taskType!=TaskType.PM.value()){//非PM上传 更新TBTASK
+            //更新任务状态
+            if(transType==TransType.TRANS.value()){
                 task.setTaskStatus(TaskStatus.ProofComplete.value());
+            }else if(transType==TransType.TRANSANDPROOF.value()){
+                if(taskType==TaskType.TRANS.value()){
+                    task.setTaskStatus(TaskStatus.TransComplete.value());
+                }else{
+                    task.setTaskStatus(TaskStatus.ProofComplete.value());
+                }
             }
         }
+
         userTaskFile.setTbTask(task);
         taskDao.save(userTaskFile);
     }
@@ -212,12 +272,28 @@ public class TaskServiceImpl extends BaseServiceImpl<TBTask> implements ITaskSer
         pager.setResult(userTaskVos);
     }
 
+    @Override
+    public void updateTask(TaskVo taskVo) {
+        taskDao.updateTask(taskVo);
+    }
+
+    @Override
+    public void updateUserTask(UserTaskVo userTaskVo) {
+        taskDao.updateUserTask(userTaskVo);
+    }
+
+    @Override
+    public TBUserTaskFile findUserTaskFileByUserTaskId(Long userTaskId, Integer taskType) {
+        return taskDao.findUserTaskFileByUserTaskId(userTaskId,taskType);
+    }
+
     //类型转换
     private List<UserTaskVo> transformResult(List<TBUserTask> list){
         List<UserTaskVo> userTaskVos = list.stream().map(userTask -> {
             UserTaskVo userTaskVo = new UserTaskVo();
             BeanUtils.copyNotNullProperties(userTask,userTaskVo);
             userTaskVo.setUserId(userTask.getSysUser().getUserId());
+            userTaskVo.setUsername(userTask.getSysUser().getUsername());
 //            userTaskVo.setUserTaskId(userTask.getUserTaskId());
 //            userTaskVo.setTaskType(userTask.getTaskType());
 //            userTaskVo.setTaskNo(userTask.getTaskNo());
@@ -226,23 +302,45 @@ public class TaskServiceImpl extends BaseServiceImpl<TBTask> implements ITaskSer
 //            userTaskVo.setExpirationDate(userTask.getExpirationDate());
             TBTask task = userTask.getTbTask();
             userTaskVo.setTaskId(task.getTaskId());
-            String[] fileids = StringUtils.split(task.getFileIds(), ",");
-            List<String> filenameList = Lists.newArrayList();
-            int transFileCount = 0;
-            int referenceFileCount = 0;
-            for (String fileId : fileids) {
-                TBOrderFile orderFile = taskDao.findEntityById(TBOrderFile.class, Long.parseLong(fileId));
-                Integer fileType = orderFile.getFileType();
-                if (fileType == TaskFileType.TASK.value()) {
-                    filenameList.add(orderFile.getFilename());
-                    transFileCount++;
-                } else referenceFileCount++;
-            }
-            userTaskVo.setFilenames(StringUtils.join(filenameList, ","));
-            userTaskVo.setTransFileCount(transFileCount);
-            userTaskVo.setReferenceFileCount(referenceFileCount);
+            userTaskVo.setTaskWords(task.getTaskWords());
+//            String[] fileids = StringUtils.split(task.getFileIds(), ",");
+//            List<String> filenameList = Lists.newArrayList();
+//            int transFileCount = 0;
+//            int referenceFileCount = 0;
+//            for (String fileId : fileids) {
+//                TBOrderFile orderFile = taskDao.findEntityById(TBOrderFile.class, Long.parseLong(fileId));
+//                Integer fileType = orderFile.getFileType();
+//                if (fileType == TaskFileType.TASK.value()) {
+//                    filenameList.add(orderFile.getFilename());
+//                    transFileCount++;
+//                } else referenceFileCount++;
+//            }
+            userTaskVo.setFilenames(task.getFilenames());
+            userTaskVo.setTransFileCount(task.getTransFileCount());
+            userTaskVo.setReferenceFileCount(task.getReferenceFileCount());
             return userTaskVo;
         }).collect(Collectors.toList());
         return userTaskVos;
+    }
+
+    private void setTaskFilePropety(TBTask task){
+        String[] fileids = StringUtils.split(task.getFileIds(), ",");
+        List<String> filenameList = Lists.newArrayList();
+        int transFileCount = 0;
+        int referenceFileCount = 0;
+        Set<String> languageSet = Sets.newHashSet();
+        for (String fileId : fileids) {
+            TBOrderFile orderFile = taskDao.findEntityById(TBOrderFile.class, Long.parseLong(fileId));
+            Integer fileType = orderFile.getFileType();
+            if (fileType == TaskFileType.TASK.value()) {
+                filenameList.add(orderFile.getFilename());
+                languageSet.add(orderFile.getSourceLanName()+"-"+orderFile.getTargetLanName());
+                transFileCount++;
+            } else referenceFileCount++;
+        }
+        task.setFilenames(StringUtils.join(filenameList,","));
+        task.setTransFileCount(transFileCount);
+        task.setReferenceFileCount(referenceFileCount);
+        task.setLanguages(StringUtils.join(languageSet,","));
     }
 }

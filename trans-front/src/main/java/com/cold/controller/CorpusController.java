@@ -2,6 +2,7 @@ package com.cold.controller;
 
 import com.cold.Constants;
 import com.cold.client.IMachineTranslationService;
+import com.cold.dto.FileObj;
 import com.cold.dto.TaskStatus;
 import com.cold.dto.TaskType;
 import com.cold.entity.SysUser;
@@ -16,8 +17,10 @@ import com.cold.service.ITaskService;
 import com.cold.tmx.TmxParse;
 import com.cold.util.ContextUtil;
 import com.cold.util.FileUtil;
+import com.cold.util.ZipUtil;
 import com.cold.vo.CorpusMatchVo;
 import com.cold.vo.UserTaskVo;
+import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -141,6 +144,23 @@ public class CorpusController extends BaseController {
             boolean success = (boolean) resMap.get("success");
             if(success){
                 corpusFileUploaded.setStatus(Constants.Status.STATUS_COMPLETE);
+                String tmxFilePath = resMap.get("tmxfile").toString();
+                File tmxFile = new File(tmxFilePath);
+                if(tmxFile.exists()){
+                    FileObj xliffObj = new FileObj(basePath+prccessPath,originalFileName);
+                    FileObj tmxObj = new FileObj(tmxFilePath,tmxFile.getName());
+                    List<FileObj> fileObjs = Lists.newArrayList(xliffObj,tmxObj);
+                    String zipName = FileUtil.getFileName(originalFileName)+"_rs.zip";
+                    String rsPath = File.separator + path+File.separator+uuid+"_rs.zip";
+                    corpusFileUploaded.setRsFilename(zipName);
+                    corpusFileUploaded.setResFilePath(rsPath);
+                    String zipFile = basePath+rsPath;
+                    try {
+                        ZipUtil.zip(zipFile,fileObjs);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
             }else{
                 String msg = resMap.get("msg").toString();
                 corpusFileUploaded.setStatus(Constants.Status.STATUS_ERROR);

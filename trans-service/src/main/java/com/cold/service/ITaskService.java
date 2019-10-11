@@ -5,6 +5,7 @@ import com.cold.entity.TBTask;
 import com.cold.entity.TBUserTask;
 import com.cold.entity.TBUserTaskFile;
 import com.cold.page.Pager;
+import com.cold.vo.TaskVo;
 import com.cold.vo.UserTaskVo;
 
 import java.util.List;
@@ -32,7 +33,7 @@ public interface ITaskService extends IBaseService<TBTask> {
      * @return
      */
     TBUserTask getTaskUserByTaskNo(String taskNo,Integer taskType);
-
+    TBUserTask getTaskUserByTaskId(Long taskId);
     /**
      * 领取任务
      * @param task
@@ -45,6 +46,12 @@ public interface ITaskService extends IBaseService<TBTask> {
      */
     void cancelTask(TBUserTask userTask);
 
+    /**
+     * 重新分配
+     * @param taskId
+     */
+    void updateTbTaskRedistribute(Long taskId);
+    void updateTbTaskRedistribute(TBTask tbTask);
     /**
      * pm生成任务
      * @param task
@@ -61,4 +68,8 @@ public interface ITaskService extends IBaseService<TBTask> {
     void saveUserTaskFile(TBUserTaskFile userTaskFile);
 
     void getUserTaskPageTask(Pager pager);
+
+    void updateTask(TaskVo taskVo);
+    void updateUserTask(UserTaskVo userTaskVo);
+    TBUserTaskFile findUserTaskFileByUserTaskId(Long userTaskId,Integer taskType);
 }

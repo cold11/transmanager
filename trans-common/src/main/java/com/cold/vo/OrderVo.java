@@ -28,4 +28,7 @@ public class OrderVo extends BaseVo {
     private String caseNo;//案号
     private String requirement;//要求
     private Integer processStatus;
+    private Integer orderWords;
+    private Integer caseFiles;
+    private String language;
 }

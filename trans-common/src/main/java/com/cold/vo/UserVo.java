@@ -17,14 +17,16 @@ public class UserVo extends BaseVo {
     private Long userId;
     private String username;
     private String password;
+    private String newPassword;
     private String name;
-   private Integer isLocked;;
+    private Integer isLocked;;
     private Integer isDisable;
     private Date disableDate;
     private Integer isDelete;
     private Integer taskCount;//进行中的任务数
     private Long userType;
     private List<Long> roles;
+    private String roleDescribe;
     public UserVo() {
     }
 

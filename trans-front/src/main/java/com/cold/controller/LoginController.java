@@ -75,13 +75,13 @@ public class LoginController extends BaseController {
 //            BeanUtils.copyProperties(userVo,user);
 //            session.setAttribute(Constants.USER_SESSION_KEY, user);
             code = "200";
-            if(currentUser.hasRole("ROLE_YIYUAN")){  //判断跳转地址.如果是译员到任务大厅，如果不是译员去试译页面
+            if(currentUser.hasRole("ROLE_YIYUAN")||currentUser.hasRole("ROLE_PROOF")){  //判断跳转地址.如果是译员到任务大厅，如果不是译员去试译页面
                 message = "task/hall";
             }else if(currentUser.hasRole("ROLE_SALE")){
                 message = "sales/order";
             }
             else if(currentUser.hasRole("ROLE_ADMIN")){
-                message = "task/hall";
+                message = "admin/users";
             }else if(currentUser.hasRole("ROLE_PM")){
                 message = "pm/assign";
             }
@@ -124,7 +124,19 @@ public class LoginController extends BaseController {
         }
         return map;
     }
+    @RequestMapping(value = "checkUsername",produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @ResponseBody
+    public Map<String,Object> checkUsername(String username){
+        Map<String,Object> map = Maps.newHashMap();
+        SysUser tbUser = userService.findByLoginName(username);
+        if(tbUser==null){
+            map.put("ok","验证通过");
 
+        }else{
+            map.put("error","用户名已存在");
+        }
+        return map;
+    }
     @RequestMapping(value = "/logout")
     public String logout(HttpServletResponse response, HttpSession session) throws IOException {
         SecurityUtils.getSubject().logout();

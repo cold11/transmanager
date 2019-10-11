@@ -72,4 +72,17 @@ public class OrderFileDaoImpl extends BaseDaoImpl implements IOrderFileDao {
         paramMap.put("isAssigned",false);
         return getCountByHqlParamMap(hql,paramMap)==0;
     }
+
+    @Override
+    public List<TBOrderFile> getOrderFilesByOrderId(Long orderId,Integer fileType) {
+        String hql = "from TBOrderFile where tbOrder.orderId=:orderId and isAssigned=:isAssigned";
+        Map<String,Object> paramMap = Maps.newHashMap();
+        paramMap.put("orderId",orderId);
+        paramMap.put("isAssigned",false);
+        if(fileType!=null){
+            hql+=" and fileType=:fileType";
+            paramMap.put("fileType",fileType);
+        }
+        return getListByHqlParamMap(hql,paramMap);
+    }
 }

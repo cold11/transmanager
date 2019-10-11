@@ -58,22 +58,22 @@ public class OrderDaoImpl extends BaseDaoImpl implements IOrderDao {
             hql += " order by expirationDate asc";
         }
         List<TBOrder> result = getPageListByParamMap(hql,paramMap,pager.getPageNo(),pager.getPageSize());
-        List<OrderVo> orderVos = Lists.newArrayList();
-        result.forEach(tbOrder -> {
-            OrderVo orderVo1 = new OrderVo();
-            try {
-                BeanUtils.copyProperties(orderVo1,tbOrder);
-                TBCustomer customer = tbOrder.getCustomer();
-                orderVo1.setCustomer(customer.getName());
-                orderVos.add(orderVo1);
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
-            } catch (InvocationTargetException e) {
-                e.printStackTrace();
-            }
-        });
+//        List<OrderVo> orderVos = Lists.newArrayList();
+//        result.forEach(tbOrder -> {
+//            OrderVo orderVo1 = new OrderVo();
+//            try {
+//                BeanUtils.copyProperties(orderVo1,tbOrder);
+//                TBCustomer customer = tbOrder.getCustomer();
+//                orderVo1.setCustomer(customer.getName());
+//                orderVos.add(orderVo1);
+//            } catch (IllegalAccessException e) {
+//                e.printStackTrace();
+//            } catch (InvocationTargetException e) {
+//                e.printStackTrace();
+//            }
+//        });
         int count = getCountByHqlParamMap(countHql,paramMap);
-        pager.setResult(orderVos);
+        pager.setResult(result);
         pager.setTotalRows(count);
     }
 

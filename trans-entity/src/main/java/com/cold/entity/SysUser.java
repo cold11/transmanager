@@ -31,6 +31,7 @@ public class SysUser implements java.io.Serializable {
     private Integer isLocked;
     private Integer isDisable;
     private Date disableDate;
+    private Date createDate;
     private Integer isDelete;
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "sysUser",cascade=CascadeType.ALL,orphanRemoval = true)
     private Set<SysUserRole> sysUserRoles = new HashSet<>();

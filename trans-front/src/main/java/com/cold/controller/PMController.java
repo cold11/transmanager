@@ -3,6 +3,7 @@ package com.cold.controller;
 import com.cold.Constants;
 import com.cold.dto.FileObj;
 import com.cold.dto.OrderStatus;
+import com.cold.dto.TaskType;
 import com.cold.entity.*;
 import com.cold.page.Pager;
 import com.cold.service.IOrderFileService;
@@ -13,10 +14,7 @@ import com.cold.util.ContextUtil;
 import com.cold.util.FileUtil;
 import com.cold.util.Global;
 import com.cold.util.ZipUtil;
-import com.cold.vo.OrderFileVo;
-import com.cold.vo.OrderVo;
-import com.cold.vo.TaskVo;
-import com.cold.vo.UserVo;
+import com.cold.vo.*;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -25,13 +23,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.File;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.*;
 
 /**
  * @Auther: ohj
@@ -131,23 +134,127 @@ public class PMController extends BaseController {
         return jsonResult(success,orderId);
     }
 
+    @RequestMapping("createdTasks")
+    public String createdTasks(){
+        return "pm/created_tasks";
+    }
+
     /**
-     * 待领取任务列表
+     * 任务列表
      * @return
      */
     @RequestMapping(value = "taskList",produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @ResponseBody
     public Map<String, Object> taskList(TaskVo taskVo) {
-        return jsonResult(true,"");
+        Pager pager = getPager(taskVo);
+        taskService.getHallPageTask(pager);
+        return jsonResult(true,pager);
     }
 
+
+    @RequestMapping("userTasks")
+    public String userTasks(){
+        return "pm/usertasks";
+    }
     /**
      * 已被领取的任务列表
      * @return
      */
-    @RequestMapping
+    @RequestMapping(value = "receivedList",produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @ResponseBody
-    public Map<String, Object> receivedList() {
+    public Map<String, Object> receivedList(UserTaskVo taskVo) {
+        Pager pager = getPager(taskVo);
+        taskService.getUserTaskPageTask(pager);
+        return jsonResult(true,pager);
+    }
+
+    @RequestMapping(value = "updateTask",produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @ResponseBody
+    public Map<String, Object> updateTask(TaskVo taskVo){
+        taskService.updateTask(taskVo);
+        return jsonResult(true,"");
+    }
+
+    @RequestMapping(value = "updateUserTask",produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @ResponseBody
+    public Map<String, Object> updateUserTask(UserTaskVo userTaskVo){
+        userTaskVo.setIsPmAssign(true);
+        taskService.updateUserTask(userTaskVo);
+        return jsonResult(true,"");
+    }
+
+    /**
+     * 重新分配
+     * @param taskId
+     * @return
+     */
+    @RequestMapping(value = "redistribute",produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @ResponseBody
+    public Map<String, Object> redistribute(Long taskId){
+        TBUserTask userTask = taskService.getTaskUserByTaskId(taskId);
+        if(userTask!=null){
+            return jsonResult(false,"任务已被领取,不能重新分配");
+        }
+        taskService.updateTbTaskRedistribute(taskId);
+        return jsonResult(true,"");
+    }
+
+    @RequestMapping("downloadTaskFile")
+    public void downloadTaskFile(UserTaskVo userTaskVo, HttpServletResponse response){
+        TBUserTaskFile userTaskFile = taskService.findUserTaskFileByUserTaskId(userTaskVo.getUserTaskId(),userTaskVo.getTaskType());
+        if(userTaskFile==null){
+            outJsonString(response,"没有可下载的文件");
+        }else{
+            String downFile = getBaseDir()+userTaskFile.getFilePath();
+            File file = new File(downFile);
+            if(file.exists()){
+                downloadFile(response,file,userTaskFile.getFilename());
+            }else{
+                outJsonString(response,"没有可下载的文件");
+            }
+        }
+
+    }
+    @RequestMapping(value = "/uploadTaskFile",method = RequestMethod.POST)
+    @ResponseBody
+    public Map<String,Object> uploadTaskFile(MultipartFile resulttaskFile, String taskId, HttpServletRequest request,
+                                             HttpServletResponse response) throws IOException {
+        log.info("任务文件上传{}",taskId);
+        Map<String, Object> json = new HashMap<String, Object>();
+        if(resulttaskFile==null){
+            json.put("success",false);
+            return json;
+        }
+        Long userId = ContextUtil.getUserId();
+        SysUser sysUser = new SysUser();
+        sysUser.setUserId(userId);
+        String basePath = getBaseDir();
+        TBUserTask userTask = taskService.findEntityById(TBUserTask.class,Long.parseLong(taskId));
+        String taskTypePathName = Constants.PMFILE_RESULT;
+        String taskNo = userTask.getTaskNo();
+        String orderNum = userTask.getOrderNum();
+        String username = ContextUtil.getLoginUser().getUsername();
+        String path = orderNum+File.separator+taskNo+File.separator+username+ File.separator+ taskTypePathName; //文件上传路径信息
+        String dir = basePath+File.separator+path;
+        FileUtil.mkDirs(dir);
+        String uuid = taskService.getUuid();
+        byte[] bytes = resulttaskFile.getBytes();
+        String originalFileName = resulttaskFile.getOriginalFilename();
+        String filename = uuid + "." + FileUtil.getFileType(originalFileName);
+        String filePath =  File.separator + path+File.separator+filename;
+        File saveFile = new File(basePath,filePath);
+        FileOutputStream fos = new FileOutputStream(saveFile);
+        fos.write(bytes);
+        fos.flush();
+        fos.close();
+        TBUserTaskFile userTaskFile = new TBUserTaskFile();
+        userTaskFile.setFilename(originalFileName);
+        userTaskFile.setSysUser(sysUser);
+        userTaskFile.setTaskType(TaskType.PM.value());
+        userTaskFile.setUploadTime(new Date());//
+        userTaskFile.setUserTask(userTask);
+        userTaskFile.setFilePath(filePath);
+        taskService.saveUserTaskFile(userTaskFile);
         return jsonResult(true,"");
     }
 }

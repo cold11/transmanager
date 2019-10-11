@@ -27,5 +27,6 @@ public class ShiroMd5Util {
     public static void main(String[] args) {
         System.out.println(SysMd5("sale","111111"));
         System.out.println(SysMd5("pm","111111"));
+        System.out.println(SysMd5("admin","111111"));
     }
 }

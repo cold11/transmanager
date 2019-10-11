@@ -15,7 +15,12 @@ $(function () {
 });
 window.operateEvents = {
     'click .download': function (e, value, row, index) {
-        $.post(ctxPath+'trans/receive',{taskNo:row.taskNo}).done(function (data) {
+        $(this).attr("disabled",true);
+        let url = ctxPath+'trans/receive';
+        if($('#taskType').val()==2){
+            url = ctxPath+'proof/receive';
+        }
+        $.post(url,{taskNo:row.taskNo}).done(function (data) {
             if(data.success){
                 window.location.href = ctxPath+"task/unfinished";
             }else if(data.msg=='unfinished'){
@@ -27,6 +32,7 @@ window.operateEvents = {
             }
         }).fail(function () {
             layer.msg('领取失败');
+            $(this).attr("disabled",false);
         });
         //window.location.href=ctxPath+"trans/receive?orderNum="+row.orderNum;
     }
@@ -73,8 +79,8 @@ function loadData(tabId) {
                 valign: 'middle'
             },
             {
-                field: 'caseNo',
-                title: '案号',
+                field: 'taskWords',
+                title: '字数',
                 align: 'center',
                 valign: 'middle'
             },
@@ -83,6 +89,19 @@ function loadData(tabId) {
                 title: '单价',
                 align: 'center',
                 valign: 'middle'
+            },
+            {
+                field: 'transFileCount',
+                title: '案件数',
+                align: 'center',
+                valign: 'middle'
+            },
+            {
+                field: 'languages',
+                title: '语种',
+                align: 'center',
+                valign: 'middle',
+                width: 100
             },
             {
                 field: 'expirationDate',
@@ -110,6 +129,7 @@ function loadData(tabId) {
             }
         ],
         onLoadSuccess:function(data){
+            $("[data-toggle='popover']").popover();
         }
 
     });
@@ -155,11 +175,12 @@ function queryParams(params) {
 }
 
 function operateFormatter(value, row, index) {
-
+    var memo = row.requirement;
+    if(memo==''||memo==null)memo='无';
     return [
-        '<a class="download" href="javascript:void(0)" title="领取">',
+        '<button class="btn btn-sm btn-primary download" data-toggle="popover" data-content="'+memo+'" data-placement="top" data-trigger="hover" title="领取">',
         '<i class="fa fa-download"></i>领取',
-        '</a>  '
+        '</button>  '
     ].join('');
 }
 

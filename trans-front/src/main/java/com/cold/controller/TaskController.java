@@ -75,6 +75,7 @@ public class TaskController extends BaseController {
              default:
                  break;
         }
+        taskVo.setCanRevice(true);
         //pager.setCondition(taskVo);
         Pager pager = getPager(taskVo);
         taskService.getHallPageTask(pager);

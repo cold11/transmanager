@@ -15,4 +15,5 @@ public interface IOrderFileService extends IBaseService<TBOrderFile> {
     List<OrderFileVo> getOrderFiles(Integer status);
     void getOrderFiles(Pager pager);
     void updateOrderStatusNoAssigned(Long orderId);//没有未分配的任务,更新状态
+    List<TBOrderFile> getOrderFilesByOrderId(Long orderId,Integer fileType);
 }

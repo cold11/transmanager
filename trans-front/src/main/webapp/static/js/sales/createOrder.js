@@ -49,10 +49,11 @@ $(document).ready(function() {
     })
         .on("select2:select",function(e){
         if(!e.params.data.isNew){
-            console.log(e.params.data.id);
+
             let cId = e.params.data.id;
             $.post(ctxPath+'findCustomer',{customerId:cId}).done(function (data) {
                 $('#requirement').val(data.msg.requirement);
+                $('#code').val(data.msg.code);
             });
             // $(this).find('[value="'+e.params.data.id+'"]').replaceWith('<option selected value="'+e.params.data.id+'">'+e.params.data.text+'</option>');
             // $.ajax({
@@ -108,6 +109,7 @@ $(document).ready(function() {
             customer.customerId = 0 ;
         }
         customer.name = $("#customerName").find("option:selected").text();
+        customer.code = $('#code').val();
         customer.requirement = $('#requirement').val();
         orderJson.customer =customer;
         $.ajax({
@@ -123,7 +125,7 @@ $(document).ready(function() {
             success: function(data){
                 if(data.success){
                     layer.alert('发布成功!',function () {
-                        location.href = ctxPath+"task/hall";
+                        location.href = ctxPath+"sales/order";
                     });
                 }else{
                     layer.alert(data.message);
@@ -200,9 +202,13 @@ function renderSwitch(fileId) {
                 let tdhtml = '<input type="number" id="filewords_'+fileId+'" />';
                 $('#td_'+fileId).html(tdhtml);
                 $(this).val("1");
+                $('#srcLan_'+fileId).show();
+                $('#tgtLan_'+fileId).show();
             } else {
                 $('#td_'+fileId).html('');
                 $(this).val("2");
+                $('#srcLan_'+fileId).hide();
+                $('#tgtLan_'+fileId).hide();
             }
         }
     });

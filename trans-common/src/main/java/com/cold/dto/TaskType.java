@@ -8,7 +8,10 @@ package com.cold.dto;
 public enum TaskType {
     INIT(0,"初始状态"),
     TRANS(1,"翻译"),
-    PROOF(2,"校对");
+    PROOF(2,"校对"),
+    FINALAPPEAL(3,"终审"),
+    TYPESET(4,"排版"),
+    PM(5,"项目经理上传");
     private final int value;
     private final String description;
     TaskType(int value,String description) {
